@@ -6,11 +6,11 @@ import getDbCredentials from "../utils/getDBCredentials.mjs";
 const tableName = process.env.SAMPLE_TABLE;
 
 /**
- * A simple example includes a HTTP get method to get all items from a DynamoDB table.
+ * Gets all entries for view count data.
  */
-export const getAllItemsHandler = async (event) => {
+export const getViewCountsHandler = async (event) => {
     if (event.httpMethod !== 'GET') {
-        throw new Error(`getAllItems only accept GET method, you tried: ${event.httpMethod}`);
+        throw new Error(`getViewCountsHandler only accept GET method, you tried: ${event.httpMethod}`);
     }
     // All log statements are written to CloudWatch
     console.info('received:', event);

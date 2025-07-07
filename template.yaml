@@ -10,18 +10,17 @@ Resources:
   # Each Lambda function is defined by properties:
   # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
 
-  # This is a Lambda function config associated with the source code: get-all-items.js
+  # This is a Lambda function config associated with the source code: get-view-counts.js
   getAllItemsFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/get-all-items.getAllItemsHandler
+      Handler: src/handlers/get-view-counts.getViewCountsHandler
       Runtime: nodejs22.x
       Architectures:
       - x86_64
       MemorySize: 128
       Timeout: 100
-      Description: A simple example includes a HTTP get method to get all items
-        from a DynamoDB table.
+      Description: Gets all entries for view count data.
       Policies:
         # Give Create/Read/Update/Delete Permissions to the SampleTable
       - DynamoDBCrudPolicy:
@@ -39,11 +38,11 @@ Resources:
   # Each Lambda function is defined by properties:
   # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
 
-  # This is a Lambda function config associated with the source code: patch-item.js
+  # This is a Lambda function config associated with the source code: increment-view-count.js
   patchItemFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/patch-item.patchItemHandler
+      Handler: src/handlers/increment-view-count.incrementViewCountHandler
       Runtime: nodejs22.x
       Architectures:
       - x86_64

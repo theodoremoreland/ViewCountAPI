@@ -1,5 +1,5 @@
 // Import getAllItemsHandler function from get-all-items.mjs
-import { getAllItemsHandler } from "../../../src/handlers/get-all-items.mjs";
+import { getAllItemsHandler } from "../../../src/handlers/get-view-counts.mjs";
 
 import { mockClient } from "aws-sdk-client-mock";
 

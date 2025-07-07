@@ -5,9 +5,9 @@ import getDbCredentials from "../utils/getDBCredentials.mjs";
 const tableName = process.env.SAMPLE_TABLE;
 
 /**
- * A simple example includes a HTTP post method to add one item to a DynamoDB table.
+ * Increments view count for a specific entry in PostgreSQL table.
  */
-export const patchItemHandler = async (event) => {
+export const incrementViewCountHandler = async (event) => {
     if (event.httpMethod !== 'PATCH') {
         throw new Error(`patchMethod only accepts PATCH method, you tried: ${event.httpMethod} method.`);
     }
