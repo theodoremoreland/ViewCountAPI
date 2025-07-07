@@ -4,8 +4,6 @@ Description: >-
 Transform:
 - AWS::Serverless-2016-10-31
 
-# Resources declares the AWS resources that you want to include in the stack
-# https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/resources-section-structure.html
 Resources:
   # Each Lambda function is defined by properties:
   # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -22,18 +20,8 @@ Resources:
       Timeout: 100
       Description: Gets all entries for view count data.
       Policies:
-        - Statement:
-            - Effect: Allow
-              Action:
-                - rds-db:connect
-                - secretsmanager:GetSecretValue
-              Resource:
-                - arn:aws:rds-db:${AWS::Region}:${AWS::AccountId}:dbuser:your-db-resource-id/your-db-username
-                - arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:your-secret-name-*
-      Environment:
-        Variables:
-          # Make table name accessible as environment variable from function code during execution
-          SAMPLE_TABLE: !Ref SampleTable
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:your-secret-name-*
       Events:
         Api:
           Type: Api
@@ -55,18 +43,8 @@ Resources:
       Timeout: 100
       Description: Increments view count for an entry.
       Policies:
-        - Statement:
-            - Effect: Allow
-              Action:
-                - rds-db:connect
-                - secretsmanager:GetSecretValue
-              Resource:
-                - arn:aws:rds-db:${AWS::Region}:${AWS::AccountId}:dbuser:your-db-resource-id/your-db-username
-                - arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:your-secret-name-*
-      Environment:
-        Variables:
-          # Make table name accessible as environment variable from function code during execution
-          SAMPLE_TABLE: !Ref SampleTable
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:your-secret-name-*
       Events:
         Api:
           Type: Api

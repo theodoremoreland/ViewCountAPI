@@ -13,7 +13,7 @@ const getDbCredentials = async () => {
     const response = await client.send(command);
     const secret = response.SecretString;
 
-    return JSON.parse(secret); // Assumes your secret is a JSON string
+    return JSON.parse(secret);
   } catch (err) {
     console.error("Error retrieving secret:", err);
 
