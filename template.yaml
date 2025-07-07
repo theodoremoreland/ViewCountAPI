@@ -11,7 +11,7 @@ Resources:
   # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
 
   # This is a Lambda function config associated with the source code: get-view-counts.js
-  getAllItemsFunction:
+  getViewCountsFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: src/handlers/get-view-counts.getViewCountsHandler
@@ -22,9 +22,14 @@ Resources:
       Timeout: 100
       Description: Gets all entries for view count data.
       Policies:
-        # Give Create/Read/Update/Delete Permissions to the SampleTable
-      - DynamoDBCrudPolicy:
-          TableName: !Ref SampleTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - rds-db:connect
+                - secretsmanager:GetSecretValue
+              Resource:
+                - arn:aws:rds-db:${AWS::Region}:${AWS::AccountId}:dbuser:your-db-resource-id/your-db-username
+                - arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:your-secret-name-*
       Environment:
         Variables:
           # Make table name accessible as environment variable from function code during execution
@@ -39,7 +44,7 @@ Resources:
   # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
 
   # This is a Lambda function config associated with the source code: increment-view-count.js
-  patchItemFunction:
+  incrementViewCountFunction:
     Type: AWS::Serverless::Function
     Properties:
       Handler: src/handlers/increment-view-count.incrementViewCountHandler
@@ -50,9 +55,14 @@ Resources:
       Timeout: 100
       Description: Increments view count for an entry.
       Policies:
-        # Give Create/Read/Update/Delete Permissions to the SampleTable
-      - DynamoDBCrudPolicy:
-          TableName: !Ref SampleTable
+        - Statement:
+            - Effect: Allow
+              Action:
+                - rds-db:connect
+                - secretsmanager:GetSecretValue
+              Resource:
+                - arn:aws:rds-db:${AWS::Region}:${AWS::AccountId}:dbuser:your-db-resource-id/your-db-username
+                - arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:your-secret-name-*
       Environment:
         Variables:
           # Make table name accessible as environment variable from function code during execution
@@ -62,7 +72,7 @@ Resources:
           Type: Api
           Properties:
             Path: /
-            Method: POST
+            Method: PATCH
 
 Outputs:
   WebEndpoint:
