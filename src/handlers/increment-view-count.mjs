@@ -1,37 +1,99 @@
-// Create clients and set shared const values outside of the handler.
-import getDbCredentials from "../utils/getDBCredentials.mjs";
+// Third party
+import { Client } from "pg";
 
-// Get the DynamoDB table name from environment variables
-const tableName = process.env.SAMPLE_TABLE;
+// Custom
+import getDbCredentials from "../utils/getDBCredentials.mjs";
+import { DB_TABLE_NAME, GITHUB_VIEWS_COLUMN, DEMO_VIEWS_COLUMN } from "../constants.js";
 
 /**
  * Increments view count for a specific entry in PostgreSQL table.
  */
 export const incrementViewCountHandler = async (event) => {
-    if (event.httpMethod !== 'PATCH') {
-        throw new Error(`patchMethod only accepts PATCH method, you tried: ${event.httpMethod} method.`);
-    }
-    // All log statements are written to CloudWatch
-    console.info('received:', event);
+  if (event.httpMethod !== "PATCH") {
+    throw new Error(
+      `patchMethod only accepts PATCH method, you tried: ${event.httpMethod} method.`
+    );
+  }
 
-    // Get id and name from the body of the request
-    const body = JSON.parse(event.body);
-    const id = body.id;
-    const name = body.name;
+  // All log statements are written to CloudWatch
+  console.info("received:", event);
 
-    try {
-        const data = await ddbDocClient.send(new PutCommand(params));
-        console.log("Success - item added or updated", data);
-      } catch (err) {
-        console.log("Error", err.stack);
-      }
+  const body = JSON.parse(event.body);
+  const { projectId, hasViewedGitHub, hasViewedDemo } = body;
 
-    const response = {
-        statusCode: 200,
-        body: JSON.stringify(body)
+  if ((!projectId && !hasViewedGitHub) || !hasViewedDemo) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({
+        error:
+          "Missing required fields: projectId and hasViewedGitHub or hasViewedDemo",
+      }),
     };
+  }
+
+  let dbClient;
+  let query;
+
+  try {
+    const creds = await getDbCredentials();
+
+    dbClient = new Client({
+      host: creds.host,
+      user: creds.username,
+      password: creds.password,
+      database: creds.dbname,
+      port: creds.port,
+    });
+
+    await dbClient.connect();
+
+    if (hasViewedGitHub) {
+      query = `
+      UPDATE ${DB_TABLE_NAME}
+      SET ${GITHUB_VIEWS_COLUMN} = ${GITHUB_VIEWS_COLUMN} + 1
+      WHERE project_id = $1
+      RETURNING *;
+    `;
+    } else {
+      query = `
+      UPDATE ${DB_TABLE_NAME}
+      SET ${DEMO_VIEWS_COLUMN} = ${DEMO_VIEWS_COLUMN} + 1
+      WHERE project_id = $1
+      RETURNING *;
+    `;
+    }
+
+    const values = [projectId];
+
+    const result = await dbClient.query(query, values);
+
+    if (result.rowCount === 0) {
+      return {
+        statusCode: 404,
+        body: JSON.stringify({ error: "Item not found" }),
+      };
+    }
+
+    const updatedItem = result.rows[0];
 
     // All log statements are written to CloudWatch
-    console.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`);
-    return response;
+    console.info(
+      `response from: ${event.path} statusCode: 200 body: ${JSON.stringify(
+        updatedItem
+      )}`
+    );
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify(updatedItem),
+    };
+  } catch (err) {
+    console.error("Database error:", err);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "Internal server error" }),
+    };
+  } finally {
+    if (dbClient) await dbClient.end();
+  }
 };

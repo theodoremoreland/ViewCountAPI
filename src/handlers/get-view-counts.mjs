@@ -1,40 +1,61 @@
-// Create clients and set shared const values outside of the handler.
+// Third party
+import { Client } from "pg";
 
+// Custom
 import getDbCredentials from "../utils/getDBCredentials.mjs";
-
-// Get the DynamoDB table name from environment variables
-const tableName = process.env.SAMPLE_TABLE;
 
 /**
  * Gets all entries for view count data.
  */
 export const getViewCountsHandler = async (event) => {
-    if (event.httpMethod !== 'GET') {
-        throw new Error(`getViewCountsHandler only accept GET method, you tried: ${event.httpMethod}`);
-    }
-    // All log statements are written to CloudWatch
-    console.info('received:', event);
+  if (event.httpMethod !== "GET") {
+    throw new Error(
+      `getViewCountsHandler only accept GET method, you tried: ${event.httpMethod}`
+    );
+  }
 
-    // get all items from the table (only first 1MB data, you can use `LastEvaluatedKey` to get the rest of data)
-    // https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/DynamoDB/DocumentClient.html#scan-property
-    // https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_Scan.html
-    var params = {
-        TableName : tableName
-    };
+  // All log statements are written to CloudWatch
+  console.info("received:", event);
 
-    try {
-        const data = await ddbDocClient.send(new ScanCommand(params));
-        var items = data.Items;
-    } catch (err) {
-        console.log("Error", err);
-    }
+  let dbClient;
+
+  try {
+    const creds = await getDbCredentials();
+
+    dbClient = new Client({
+      host: creds.host,
+      user: creds.username,
+      password: creds.password,
+      database: creds.dbname,
+      port: creds.port,
+    });
+
+    await dbClient.connect();
+
+    const result = await dbClient.query(`SELECT * FROM ${DB_TABLE_NAME}`);
+    const items = result.rows;
 
     const response = {
-        statusCode: 200,
-        body: JSON.stringify(items)
+      statusCode: 200,
+      body: JSON.stringify(items),
     };
 
     // All log statements are written to CloudWatch
-    console.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`);
+    console.info(
+      `response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`
+    );
+
+    console.info(
+      `response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`
+    );
     return response;
-}
+  } catch (err) {
+    console.error("Database error:", err);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "Internal server error" }),
+    };
+  } finally {
+    if (dbClient) await dbClient.end();
+  }
+};
