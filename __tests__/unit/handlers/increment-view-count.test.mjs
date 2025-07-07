@@ -1,16 +1,18 @@
-// Import putItemHandler function from put-item.mjs
-import { putItemHandler } from "../../../src/handlers/put-item.mjs";
-
+// Third party
 import { mockClient } from "aws-sdk-client-mock";
-// This includes all tests for patchItemHandler()
-describe("Test patchItemHandler", function () {
+
+// Import incrementViewCountHandler function from increment-view-count.mjs
+import { incrementViewCountHandler } from "../../../src/handlers/increment-view-count.mjs";
+
+// This includes all tests for incrementViewCountHandler()
+describe("Test incrementViewCountHandler", function () {
   const ddbMock = mockClient(DynamoDBDocumentClient);
 
   beforeEach(() => {
     ddbMock.reset();
   });
 
-  // This test invokes patchItemHandler() and compare the result
+  // This test invokes incrementViewCountHandler() and compare the result
   it("should update id in the table", async () => {
     const returnedItem = { id: "id1", name: "name1" };
 

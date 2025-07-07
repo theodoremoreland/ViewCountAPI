@@ -3,6 +3,7 @@ import { Client } from "pg";
 
 // Custom
 import getDbCredentials from "../utils/getDBCredentials.mjs";
+import { DB_NAME } from "../constants";
 
 /**
  * Gets all entries for view count data.
@@ -26,7 +27,7 @@ export const getViewCountsHandler = async (event) => {
       host: creds.host,
       user: creds.username,
       password: creds.password,
-      database: creds.dbname,
+      database: DB_NAME,
       port: creds.port,
     });
 

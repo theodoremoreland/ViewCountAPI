@@ -4,6 +4,7 @@ import { Client } from "pg";
 // Custom
 import getDbCredentials from "../utils/getDBCredentials.mjs";
 import {
+  DB_NAME,
   DB_TABLE_NAME,
   GITHUB_VIEWS_COLUMN,
   DEMO_VIEWS_COLUMN,
@@ -46,7 +47,7 @@ export const incrementViewCountHandler = async (event) => {
       host: creds.host,
       user: creds.username,
       password: creds.password,
-      database: creds.dbname,
+      database: DB_NAME,
       port: creds.port,
     });
 

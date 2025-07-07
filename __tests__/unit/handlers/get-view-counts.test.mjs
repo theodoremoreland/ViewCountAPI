@@ -1,10 +1,11 @@
-// Import getAllItemsHandler function from get-all-items.mjs
-import { getAllItemsHandler } from "../../../src/handlers/get-view-counts.mjs";
-
+// Third party
 import { mockClient } from "aws-sdk-client-mock";
 
-// This includes all tests for getAllItemsHandler()
-describe("Test getAllItemsHandler", () => {
+// Import getViewCountsHandler function from get-view-counts.mjs
+import { getViewCountsHandler } from "../../../src/handlers/get-view-counts.mjs";
+
+// This includes all tests for getViewCountsHandler()
+describe("Test getViewCountsHandler", () => {
   const ddbMock = mockClient(DynamoDBDocumentClient);
 
   beforeEach(() => {
@@ -24,7 +25,7 @@ describe("Test getAllItemsHandler", () => {
     };
 
     // Invoke helloFromLambdaHandler()
-    const result = await getAllItemsHandler(event);
+    const result = await getViewCountsHandler(event);
 
     const expectedResult = {
       statusCode: 200,
