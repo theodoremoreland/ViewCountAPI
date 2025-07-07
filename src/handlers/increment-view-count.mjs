@@ -3,7 +3,11 @@ import { Client } from "pg";
 
 // Custom
 import getDbCredentials from "../utils/getDBCredentials.mjs";
-import { DB_TABLE_NAME, GITHUB_VIEWS_COLUMN, DEMO_VIEWS_COLUMN } from "../constants.js";
+import {
+  DB_TABLE_NAME,
+  GITHUB_VIEWS_COLUMN,
+  DEMO_VIEWS_COLUMN,
+} from "../constants.js";
 
 /**
  * Increments view count for a specific entry in PostgreSQL table.
@@ -89,6 +93,7 @@ export const incrementViewCountHandler = async (event) => {
     };
   } catch (err) {
     console.error("Database error:", err);
+
     return {
       statusCode: 500,
       body: JSON.stringify({ error: "Internal server error" }),

@@ -45,12 +45,10 @@ export const getViewCountsHandler = async (event) => {
       `response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`
     );
 
-    console.info(
-      `response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`
-    );
     return response;
   } catch (err) {
     console.error("Database error:", err);
+
     return {
       statusCode: 500,
       body: JSON.stringify({ error: "Internal server error" }),
