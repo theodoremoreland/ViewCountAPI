@@ -1,11 +1,18 @@
 # View Count API
 
+A Rest API for reporting and getting view counts. This was designed for use with my developer portfolio websites.
+
 ## Table of contents
 
+- [Overview](#overview)
+- [Technologies used](#technologies-used)
 - [Deploy application](#deploy-the-application)
 - [Fetch, tail, and filter Lambda function logs](#fetch-tail-and-filter-lambda-function-logs)
 - [Unit tests](#unit-tests)
 - [Cleanup](#unit-tests)
+- [Resources](#resources)
+
+## Overview
 
 This project contains source code and supporting files for a serverless application that you can deploy with the AWS Serverless Application Model (AWS SAM) command line interface (CLI). It includes the following files and folders:
 
@@ -14,7 +21,18 @@ This project contains source code and supporting files for a serverless applicat
 - `__tests__` - Unit tests for the application code.
 - `template.yaml` - A template that defines the application's AWS resources.
 
-The application uses several AWS resources, including Lambda functions, an API Gateway API, AWS Secrets Manager, and AWS RDS. Two of which are defined in the `template.yaml` file in this project. You can update the template to add AWS resources through the same deployment process that updates your application code.
+The application uses several AWS resources, including Lambda functions, an API Gateway API, AWS Secrets Manager, and AWS RDS. Two of which are defined in the `template.yaml` file in this project. You can update the template to add AWS resources through the same deployment process that updates the application code.
+
+## Technologies used
+
+- JavaScript
+- Node
+- Jest
+- AWS SAM
+- AWS Lambda
+- AWS API Gateway
+- AWS Secrets Manager
+- AWS RDS (PostgreSQL)
 
 ## Deploy the application
 
