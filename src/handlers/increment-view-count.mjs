@@ -7,6 +7,7 @@ import {
   DB_TABLE_NAME,
   GITHUB_VIEWS_COLUMN,
   DEMO_VIEWS_COLUMN,
+  PROJECT_ID_COLUMN,
 } from "../constants.js";
 
 /**
@@ -55,14 +56,14 @@ export const incrementViewCountHandler = async (event) => {
       query = `
       UPDATE ${DB_TABLE_NAME}
       SET ${GITHUB_VIEWS_COLUMN} = ${GITHUB_VIEWS_COLUMN} + 1
-      WHERE project_id = $1
+      WHERE ${PROJECT_ID_COLUMN} = $1
       RETURNING *;
     `;
     } else {
       query = `
       UPDATE ${DB_TABLE_NAME}
       SET ${DEMO_VIEWS_COLUMN} = ${DEMO_VIEWS_COLUMN} + 1
-      WHERE project_id = $1
+      WHERE ${PROJECT_ID_COLUMN} = $1
       RETURNING *;
     `;
     }
