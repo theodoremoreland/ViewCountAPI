@@ -1,5 +1,5 @@
 node_modules
-
+.aws-sam
 env.json
 
 # Byte-compiled / optimized / DLL files
