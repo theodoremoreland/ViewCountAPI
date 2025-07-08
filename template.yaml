@@ -83,14 +83,14 @@ Resources:
 
 Outputs:
   WebEndpoint:
-    Description: API Gateway endpoint URL for Test stage
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Test/"
+    Description: API Gateway endpoint URL for Prod stage
+    # The path param here will always default to Prod and Stage unless a StageName is defined and referenced elsewhere in this template, regardless of any changes (e.g. /Test)
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
     Environment:
       Variables:
-        AWS_REGION: !Ref AWS::Region
-        SECRET_ARN: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${DbSecretName}-*"
+        SECRET_NAME: !Ref DbSecretName
     LoggingConfig:
       LogFormat: JSON

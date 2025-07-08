@@ -8,13 +8,13 @@ const getDbCredentials = async () => {
     throw new Error("AWS_REGION environment variable is not defined");
   }
 
-  if (!process.env.SECRET_ARN) {
-    throw new Error("SECRET_ARN environment variable is not defined");
+  if (!process.env.SECRET_NAME) {
+    throw new Error("SECRET_NAME environment variable is not defined");
   }
 
   const client = new SecretsManagerClient({ region: process.env.AWS_REGION });
   const command = new GetSecretValueCommand({
-    SecretId: process.env.SECRET_ARN,
+    SecretId: process.env.SECRET_NAME,
   });
 
   try {
