@@ -24,6 +24,26 @@ This project contains source code and supporting files for a serverless applicat
 
 The application uses several AWS resources, including Lambda functions, an API Gateway API, AWS Secrets Manager, and AWS RDS. Two of which are defined in the `template.yaml` file in this project. You can update the template to add AWS resources through the same deployment process that updates the application code.
 
+### Other files
+
+#### env.json
+
+Maps function logical IDs (from the template.yaml) to their environment variables.
+Each top-level key must match the logical ID of a Lambda function defined in your template.yaml. SAM uses this to inject environment variables into the corresponding containers during local execution (this is not to be confused with providing parameters overrides to the template.yaml).
+
+Incorporate into commands like so:
+
+```bash
+sam local start-api --env-vars env.json
+```
+or
+
+```bash
+sam local start-api \
+  --env-vars env.json \
+  --parameter-overrides "DbSecretName=my-db-secret"
+```
+
 ## Technologies used
 
 - JavaScript
@@ -50,6 +70,12 @@ To build and deploy your application for the first time, run the following in yo
 ```bash
 sam build
 sam deploy --guided
+```
+
+Placeholder (for future reference as I need to assign the parameters defined in template.yaml at some point):
+
+```bash
+sam deploy --parameter-overrides DbSecretName=your-secret-name
 ```
 
 The first command will build the source of your application. The second command will package and deploy your application to AWS, with a series of prompts:
