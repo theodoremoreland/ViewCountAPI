@@ -1,38 +1,86 @@
 // Third party
-import { mockClient } from "aws-sdk-client-mock";
+import { jest } from "@jest/globals";
 
-// Import getViewCountsHandler function from get-view-counts.mjs
-import { getViewCountsHandler } from "../../../src/handlers/get-view-counts.mjs";
+// Mock pg Client
+jest.unstable_mockModule("pg", () => {
+  const mClient = {
+    connect: jest.fn(),
+    query: jest.fn(),
+    end: jest.fn(),
+  };
+  return {
+    Client: jest.fn(() => mClient),
+  };
+});
 
-// This includes all tests for getViewCountsHandler()
-describe("Test getViewCountsHandler", () => {
-  const ddbMock = mockClient(DynamoDBDocumentClient);
+// Mock getDbCredentials
+jest.unstable_mockModule("../../../src/utils/getDBCredentials.mjs", () => ({
+  default: jest.fn().mockResolvedValue({
+    host: "localhost",
+    username: "test_user",
+    password: "test_pass",
+    port: 5432,
+  }),
+}));
 
-  beforeEach(() => {
-    ddbMock.reset();
+describe("getViewCountsHandler", () => {
+  let handler;
+  let client;
+
+  beforeEach(async () => {
+    await jest.isolateModulesAsync(async () => {
+      const { Client } = await import("pg");
+      client = new Client();
+
+      const mod = await import("../../../src/handlers/get-view-counts.mjs");
+      handler = mod.getViewCountsHandler;
+    });
+
+    jest.clearAllMocks();
   });
 
-  it("should return ids", async () => {
-    const items = [{ id: "id1" }, { id: "id2" }];
-
-    // Return the specified value whenever the spied scan function is called
-    ddbMock.on(ScanCommand).resolves({
-      Items: items,
-    });
+  it("should return all view count entries", async () => {
+    const mockRows = [{ id: "1" }, { id: "2" }];
+    client.query.mockResolvedValueOnce({ rows: mockRows });
 
     const event = {
       httpMethod: "GET",
+      path: "/",
     };
 
-    // Invoke helloFromLambdaHandler()
-    const result = await getViewCountsHandler(event);
+    const result = await handler(event);
 
-    const expectedResult = {
+    expect(client.connect).toHaveBeenCalled();
+    expect(client.query).toHaveBeenCalledWith("SELECT * FROM view_count");
+    expect(client.end).toHaveBeenCalled();
+
+    expect(result).toEqual({
       statusCode: 200,
-      body: JSON.stringify(items),
+      body: JSON.stringify(mockRows),
+    });
+  });
+
+  it("should return 500 on database error", async () => {
+    client.query.mockRejectedValueOnce(new Error("DB failure"));
+
+    const event = {
+      httpMethod: "GET",
+      path: "/",
     };
 
-    // Compare the result with the expected result
-    expect(result).toEqual(expectedResult);
+    const result = await handler(event);
+
+    expect(result.statusCode).toBe(500);
+    expect(JSON.parse(result.body).error).toBe("Internal server error");
+  });
+
+  it("should throw error on non-GET method", async () => {
+    const event = {
+      httpMethod: "POST",
+    };
+
+    await expect(handler(event)).rejects.toThrow(
+      /getViewCountsHandler only accept GET method/
+    );
   });
 });

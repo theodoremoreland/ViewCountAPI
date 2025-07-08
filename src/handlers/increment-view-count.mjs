@@ -9,7 +9,7 @@ import {
   GITHUB_VIEWS_COLUMN,
   DEMO_VIEWS_COLUMN,
   PROJECT_ID_COLUMN,
-} from "../constants.js";
+} from "../constants.mjs";
 
 /**
  * Increments view count for a specific entry in PostgreSQL table.
@@ -26,8 +26,10 @@ export const incrementViewCountHandler = async (event) => {
 
   const body = JSON.parse(event.body);
   const { projectId, hasViewedGitHub, hasViewedDemo } = body;
+  let dbClient;
+  let query;
 
-  if ((!projectId && !hasViewedGitHub) || !hasViewedDemo) {
+  if (!projectId && (!hasViewedGitHub || !hasViewedDemo)) {
     return {
       statusCode: 400,
       body: JSON.stringify({
@@ -36,9 +38,6 @@ export const incrementViewCountHandler = async (event) => {
       }),
     };
   }
-
-  let dbClient;
-  let query;
 
   try {
     const creds = await getDbCredentials();

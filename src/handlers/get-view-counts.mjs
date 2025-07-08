@@ -3,7 +3,7 @@ import { Client } from "pg";
 
 // Custom
 import getDbCredentials from "../utils/getDBCredentials.mjs";
-import { DB_NAME } from "../constants";
+import { DB_NAME, DB_TABLE_NAME } from "../constants.mjs";
 
 /**
  * Gets all entries for view count data.
