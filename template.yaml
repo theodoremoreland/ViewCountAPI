@@ -8,8 +8,17 @@ Parameters:
   DbSecretName:
     Type: String
     Description: Name of the Secrets Manager secret storing DB credentials
+  Stage:
+    Type: String
+    Default: Dev
+    Description: The stage for the Rest API Gateway. The implicitly created endpoints are suffixed with /Prod and /Stage. So, this parameter can be used to override the Prod stage.
 
 Resources:
+  DevApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: !Ref Stage
+
   # Each Lambda function is defined by properties:
   # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
 
@@ -34,6 +43,7 @@ Resources:
           Properties:
             Path: /
             Method: POST
+            RestApiId: !Ref DevApi
 
   # Each Lambda function is defined by properties:
   # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -59,6 +69,8 @@ Resources:
           Properties:
             Path: /
             Method: GET
+            RestApiId: !Ref DevApi
+
   # Each Lambda function is defined by properties:
   # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
 
@@ -83,12 +95,12 @@ Resources:
           Properties:
             Path: /
             Method: PATCH
+            RestApiId: !Ref DevApi
 
 Outputs:
-  WebEndpoint:
-    Description: API Gateway endpoint URL for Prod stage
-    # The path param here will always default to Prod and Stage unless a StageName is defined and referenced elsewhere in this template, regardless of any changes (e.g. /Test)
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+  DevApiEndpoint:
+    Value: !Sub "https://${DevApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}/"
+
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:

@@ -36,6 +36,7 @@ Incorporate into commands like so:
 ```bash
 sam local start-api --env-vars env.json
 ```
+
 or
 
 ```bash
