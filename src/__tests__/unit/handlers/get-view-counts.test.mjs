@@ -14,7 +14,7 @@ jest.unstable_mockModule("pg", () => {
 });
 
 // Mock getDbCredentials
-jest.unstable_mockModule("../../../src/utils/getDBCredentials.mjs", () => ({
+jest.unstable_mockModule("../../../utils/getDBCredentials.mjs", () => ({
   default: jest.fn().mockResolvedValue({
     host: "localhost",
     username: "test_user",
@@ -32,7 +32,7 @@ describe("getViewCountsHandler", () => {
       const { Client } = await import("pg");
       client = new Client();
 
-      const mod = await import("../../../src/handlers/get-view-counts.mjs");
+      const mod = await import("../../../handlers/get-view-counts.mjs");
       handler = mod.getViewCountsHandler;
     });
 

@@ -13,7 +13,7 @@ jest.unstable_mockModule("pg", () => {
   };
 });
 
-jest.unstable_mockModule("../../../src/utils/getDBCredentials.mjs", () => ({
+jest.unstable_mockModule("../../../utils/getDBCredentials.mjs", () => ({
   default: jest.fn().mockResolvedValue({
     host: "localhost",
     username: "test_user",
@@ -32,7 +32,7 @@ describe("incrementViewCountHandler", () => {
       client = new Client();
 
       const mod = await import(
-        "../../../src/handlers/increment-view-count.mjs"
+        "../../../handlers/increment-view-count.mjs"
       );
       handler = mod.incrementViewCountHandler;
 

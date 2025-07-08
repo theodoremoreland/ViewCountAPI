@@ -17,7 +17,8 @@ Resources:
   addProjectFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/add-project.addProjectHandler
+      CodeUri: src/
+      Handler: handlers/add-project.addProjectHandler
       Runtime: nodejs22.x
       Architectures:
       - x86_64
@@ -41,7 +42,8 @@ Resources:
   getViewCountsFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/get-view-counts.getViewCountsHandler
+      CodeUri: src/
+      Handler: handlers/get-view-counts.getViewCountsHandler
       Runtime: nodejs22.x
       Architectures:
       - x86_64
@@ -64,7 +66,8 @@ Resources:
   incrementViewCountFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Handler: src/handlers/increment-view-count.incrementViewCountHandler
+      CodeUri: src/
+      Handler: handlers/increment-view-count.incrementViewCountHandler
       Runtime: nodejs22.x
       Architectures:
       - x86_64
