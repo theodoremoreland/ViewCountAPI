@@ -3,13 +3,7 @@ import { Client } from "pg";
 
 // Custom
 import getDbCredentials from "../utils/getDBCredentials.mjs";
-import {
-  DB_NAME,
-  DB_TABLE_NAME,
-  GITHUB_VIEWS_COLUMN,
-  DEMO_VIEWS_COLUMN,
-  PROJECT_ID_COLUMN,
-} from "../constants.mjs";
+import { DB_NAME, VIEW_COUNT_TABLE } from "../constants.mjs";
 
 /**
  * Increments view count for a specific entry in PostgreSQL table.
@@ -55,16 +49,16 @@ export const incrementViewCountHandler = async (event) => {
 
     if (hasViewedGitHub) {
       query = `
-      UPDATE ${DB_TABLE_NAME}
-      SET ${GITHUB_VIEWS_COLUMN} = ${GITHUB_VIEWS_COLUMN} + 1
-      WHERE ${PROJECT_ID_COLUMN} = $1
+      UPDATE ${VIEW_COUNT_TABLE.name}
+      SET ${VIEW_COUNT_TABLE.columns.githubViews} = ${VIEW_COUNT_TABLE.columns.githubViews} + 1
+      WHERE ${VIEW_COUNT_TABLE.columns.projectId} = $1
       RETURNING *;
     `;
     } else {
       query = `
-      UPDATE ${DB_TABLE_NAME}
-      SET ${DEMO_VIEWS_COLUMN} = ${DEMO_VIEWS_COLUMN} + 1
-      WHERE ${PROJECT_ID_COLUMN} = $1
+      UPDATE ${VIEW_COUNT_TABLE.name}
+      SET ${VIEW_COUNT_TABLE.columns.demoViews} = ${VIEW_COUNT_TABLE.columns.demoViews} + 1
+      WHERE ${VIEW_COUNT_TABLE.columns.projectId} = $1
       RETURNING *;
     `;
     }

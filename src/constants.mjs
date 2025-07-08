@@ -1,6 +1,19 @@
 export const DB_NAME = "metadata";
-export const DB_TABLE_NAME = "view_count";
-export const PROJECT_ID_COLUMN = "project_id";
-export const PROJECT_NAME_COLUMN = "project_name";
-export const GITHUB_VIEWS_COLUMN = "github_views";
-export const DEMO_VIEWS_COLUMN = "demo_views";
+
+// These are hacky database models. Ensures consistency of names without using an ORM.
+export const VIEW_COUNT_TABLE = {
+  name: "view_count",
+  columns: {
+    projectId: "project_id",
+    githubViews: "github_views",
+    demoViews: "demo_views",
+  },
+};
+
+export const PROJECT_TABLE = {
+  name: "project",
+  columns: {
+    projectId: "project_id",
+    name: "name",
+  },
+};

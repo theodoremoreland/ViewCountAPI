@@ -3,7 +3,7 @@ import { Client } from "pg";
 
 // Custom
 import getDbCredentials from "../utils/getDBCredentials.mjs";
-import { DB_NAME, DB_TABLE_NAME } from "../constants.mjs";
+import { DB_NAME, VIEW_COUNT_TABLE } from "../constants.mjs";
 
 /**
  * Gets all entries for view count data.
@@ -33,7 +33,7 @@ export const getViewCountsHandler = async (event) => {
 
     await dbClient.connect();
 
-    const result = await dbClient.query(`SELECT * FROM ${DB_TABLE_NAME}`);
+    const result = await dbClient.query(`SELECT * FROM ${VIEW_COUNT_TABLE.name}`);
     const items = result.rows;
 
     const response = {

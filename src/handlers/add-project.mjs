@@ -5,13 +5,13 @@ import { Client } from "pg";
 import getDbCredentials from "../utils/getDBCredentials.mjs";
 import {
   DB_NAME,
-  DB_TABLE_NAME,
+  VIEW_COUNT_TABLE_NAME,
   PROJECT_ID_COLUMN,
   PROJECT_NAME_COLUMN,
 } from "../constants.mjs";
 
 /**
- * Add entry to view_count table.
+ * Add entry to project table.
  */
 export const addProjectHandler = async (event) => {
   if (event.httpMethod !== "POST") {
@@ -50,7 +50,7 @@ export const addProjectHandler = async (event) => {
     await dbClient.connect();
 
     const query = `
-      INSERT INTO ${DB_TABLE_NAME} (${PROJECT_ID_COLUMN}, ${PROJECT_NAME_COLUMN})
+      INSERT INTO ${VIEW_COUNT_TABLE_NAME} (${PROJECT_ID_COLUMN}, ${PROJECT_NAME_COLUMN})
       VALUES ($1, $2)
       RETURNING *;
     `;
