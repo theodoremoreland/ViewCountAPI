@@ -1,0 +1,8 @@
+{
+    "httpMethod": "POST",
+    "path": "/",
+    "body": "{\"name\": \"New Project\", \"description\": \"This is a new project.\"}",
+    "headers": {
+        "Content-Type": "application/json"
+    }
+}

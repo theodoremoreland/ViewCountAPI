@@ -26,10 +26,11 @@ export const incrementViewCountHandler = async (event) => {
 
   const body = JSON.parse(event.body);
   const { projectId, hasViewedGitHub, hasViewedDemo } = body;
+  const hasView = hasViewedGitHub || hasViewedDemo;
   let dbClient;
   let query;
 
-  if (!projectId && (!hasViewedGitHub || !hasViewedDemo)) {
+  if (!projectId || !hasView) {
     return {
       statusCode: 400,
       body: JSON.stringify({

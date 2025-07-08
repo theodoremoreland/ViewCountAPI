@@ -13,6 +13,30 @@ Resources:
   # Each Lambda function is defined by properties:
   # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
 
+  # This is a Lambda function config associated with the source code: add-project.js
+  addProjectFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/handlers/add-project.addProjectHandler
+      Runtime: nodejs22.x
+      Architectures:
+      - x86_64
+      MemorySize: 128
+      Timeout: 100
+      Description: Adds a new project.
+      Policies:
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${DbSecretName}-*"
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /
+            Method: POST
+
+  # Each Lambda function is defined by properties:
+  # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+
   # This is a Lambda function config associated with the source code: get-view-counts.js
   getViewCountsFunction:
     Type: AWS::Serverless::Function

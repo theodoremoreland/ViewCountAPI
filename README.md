@@ -7,6 +7,7 @@ A Rest API for reporting and getting view counts. This was designed for use with
 - [Overview](#overview)
 - [Technologies used](#technologies-used)
 - [Deploy application](#deploy-the-application)
+- [Use the AWS SAM CLI to build and test locally](#use-the-aws-sam-cli-to-build-and-test-locally)
 - [Fetch, tail, and filter Lambda function logs](#fetch-tail-and-filter-lambda-function-logs)
 - [Unit tests](#unit-tests)
 - [Cleanup](#unit-tests)
@@ -108,7 +109,7 @@ To simplify troubleshooting, the AWS SAM CLI has a command called `sam logs`. `s
 **NOTE:** This command works for all Lambda functions, not just the ones you deploy using AWS SAM.
 
 ```bash
-my-application$ sam logs -n {function name} --stack-name sam-app --tail
+my-application$ sam logs -n {function name} --stack-name view-count-api --tail
 ```
 
 **NOTE:** This uses the logical name of the function within the stack. This is the correct name to use when searching logs inside an AWS Lambda function within a CloudFormation stack, even if the deployed function name varies due to CloudFormation's unique resource name generation.
@@ -127,7 +128,7 @@ my-application$ npm run test
 To delete the sample application that you created, use the AWS CLI. Assuming you used your project name for the stack name, you can run the following:
 
 ```bash
-sam delete --stack-name app
+sam delete --stack-name view-count-api
 ```
 
 ## Resources
