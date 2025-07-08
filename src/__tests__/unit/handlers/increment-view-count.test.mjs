@@ -41,14 +41,14 @@ describe("incrementViewCountHandler", () => {
   });
 
   it("should increment GitHub view count and return updated item", async () => {
-    const mockRow = { projectId: 123, githubViews: 5 };
+    const mockRow = { projectId: "123", githubViews: 5 };
 
     client.query.mockResolvedValueOnce({ rowCount: 1, rows: [mockRow] });
 
     const event = {
       httpMethod: "PATCH",
       body: JSON.stringify({
-        projectId: 123,
+        projectId: "123",
         isGitHubView: true,
       }),
       path: "/",
@@ -59,7 +59,7 @@ describe("incrementViewCountHandler", () => {
     expect(client.connect).toHaveBeenCalled();
     expect(client.query).toHaveBeenCalledWith(
       expect.stringContaining("UPDATE"),
-      [123]
+      ["123"]
     );
     expect(client.end).toHaveBeenCalled();
     expect(result.statusCode).toBe(200);

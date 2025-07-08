@@ -3,22 +3,33 @@ import { Client } from "pg";
 
 // Custom
 import getDbCredentials from "../utils/getDBCredentials.mjs";
+import buildResponse from "../utils/buildResponse.mjs";
 import { DB_NAME, VIEW_COUNT_TABLE } from "../constants.mjs";
 
 /**
  * Gets all entries for view count data.
  */
 export const getViewCountsHandler = async (event) => {
-  if (event.httpMethod !== "GET") {
-    throw new Error(
-      `getViewCountsHandler only accepts GET method, you tried: ${event.httpMethod}`
-    );
-  }
-
   // All log statements are written to CloudWatch
   console.info("received:", event);
 
   let dbClient;
+
+  try {
+    if (event.httpMethod !== "GET") {
+      throw new Error(
+        `getViewCountsHandler only accepts GET method, you tried: ${event.httpMethod}`
+      );
+    }
+  } catch (err) {
+    console.error(err);
+
+    const errorResponse = buildResponse(400, {
+      error: err.message || "Invalid request",
+    });
+
+    return errorResponse;
+  }
 
   try {
     const creds = await getDbCredentials();
@@ -50,10 +61,7 @@ export const getViewCountsHandler = async (event) => {
       };
     }
 
-    const response = {
-      statusCode: 200,
-      body: JSON.stringify(processedResults),
-    };
+    const response = buildResponse(200, processedResults);
 
     // All log statements are written to CloudWatch
     console.info(
@@ -62,12 +70,13 @@ export const getViewCountsHandler = async (event) => {
 
     return response;
   } catch (err) {
-    console.error("Database error:", err);
+    console.error(err);
 
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "Internal server error" }),
-    };
+    const errorResponse = buildResponse(500, {
+      error: "Internal server error",
+    });
+
+    return errorResponse;
   } finally {
     if (dbClient) await dbClient.end();
   }

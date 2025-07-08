@@ -7,6 +7,7 @@ import {
   DB_NAME,
   PROJECT_TABLE
 } from "../constants.mjs";
+import buildResponse from "../utils/buildResponse.mjs";
 
 /**
  * Add entry to project table.
@@ -26,12 +27,12 @@ export const addProjectHandler = async (event) => {
   let dbClient;
 
   if (!projectId || !projectName) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({
-        error: "Missing required fields: projectId and projectName",
-      }),
-    };
+    const errorMessage = "Missing required fields: projectId and projectName";
+    console.error(errorMessage);
+
+    return buildResponse(400, {
+      error: errorMessage,
+    });
   }
 
   try {
@@ -60,21 +61,18 @@ export const addProjectHandler = async (event) => {
 
     const result = await dbClient.query(query, values);
     const newEntry = result.rows[0];
+    const response = buildResponse(201, newEntry);
 
     // All log statements are written to CloudWatch
-    console.info(`response from: ${event.path} statusCode: 201`);
+    console.info(`response from: ${event.path} statusCode: ${response.statusCode} body: ${response.body}`);
 
-    return {
-      statusCode: 201,
-      body: JSON.stringify(newEntry),
-    };
+    return response;
   } catch (err) {
-    console.error("Database error:", err);
+    console.error(err);
 
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "Internal server error" }),
-    };
+    return buildResponse(500, {
+      error: "Internal server error",
+    });
   } finally {
     if (dbClient) await dbClient.end();
   }

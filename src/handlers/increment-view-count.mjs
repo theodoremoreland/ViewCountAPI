@@ -3,18 +3,13 @@ import { Client } from "pg";
 
 // Custom
 import getDbCredentials from "../utils/getDBCredentials.mjs";
+import buildResponse from "../utils/buildResponse.mjs";
 import { DB_NAME, VIEW_COUNT_TABLE } from "../constants.mjs";
 
 /**
  * Increments view count for a specific entry in PostgreSQL table.
  */
 export const incrementViewCountHandler = async (event) => {
-  if (event.httpMethod !== "PATCH") {
-    throw new Error(
-      `patchMethod only accepts PATCH method, you tried: ${event.httpMethod} method.`
-    );
-  }
-
   // All log statements are written to CloudWatch
   console.info("received:", event);
 
@@ -24,14 +19,28 @@ export const incrementViewCountHandler = async (event) => {
   let dbClient;
   let query;
 
-  if (!projectId || !hasView) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({
-        error:
-          "Missing required fields: projectId and isGitHubView or isDemoView",
-      }),
-    };
+  try {
+    if (event.httpMethod !== "PATCH") {
+      throw new Error(
+        `patchMethod only accepts PATCH method, you tried: ${event.httpMethod} method.`
+      );
+    }
+
+    if (!projectId || !hasView) {
+      throw new Error(
+        "Missing required fields: projectId and isGitHubView or isDemoView"
+      );
+    }
+  } catch (err) {
+    const errorMessage = err.message || "Invalid request";
+
+    console.error(errorMessage);
+
+    const errorResponse = buildResponse(400, {
+      error: errorMessage,
+    });
+
+    return errorResponse;
   }
 
   try {
@@ -67,17 +76,18 @@ export const incrementViewCountHandler = async (event) => {
     }
 
     const values = [projectId];
-
     const result = await dbClient.query(query, values);
 
     if (result.rowCount === 0) {
-      return {
-        statusCode: 404,
-        body: JSON.stringify({ error: "Item not found" }),
-      };
+      const response = buildResponse(404, {
+        error: "Item not found",
+      });
+
+      return response;
     }
 
     const updatedItem = result.rows[0];
+    const response = buildResponse(200, updatedItem);
 
     // All log statements are written to CloudWatch
     console.info(
@@ -86,17 +96,15 @@ export const incrementViewCountHandler = async (event) => {
       )}`
     );
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify(updatedItem),
-    };
+    return response;
   } catch (err) {
-    console.error("Database error:", err);
+    console.error(err);
 
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "Internal server error" }),
-    };
+    const errorResponse = buildResponse(500, {
+      error: "Internal server error",
+    });
+
+    return errorResponse;
   } finally {
     if (dbClient) await dbClient.end();
   }

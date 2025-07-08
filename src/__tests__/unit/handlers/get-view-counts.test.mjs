@@ -1,5 +1,5 @@
 // Third party
-import { jest } from "@jest/globals";
+import { expect, jest } from "@jest/globals";
 
 // Mock pg Client
 jest.unstable_mockModule("pg", () => {
@@ -40,30 +40,31 @@ describe("getViewCountsHandler", () => {
   });
 
   it("should return all view count entries", async () => {
+    const last_updated = new Date();
     const mockRows = [
       {
         project_id: "0",
         github_views: 10,
         demo_views: 5,
-        last_updated: new Date(),
+        last_updated: last_updated,
       },
       {
         project_id: "1",
         github_views: 20,
         demo_views: 10,
-        last_updated: new Date(),
+        last_updated: last_updated,
       },
     ];
     const processedResults = {
       0: {
         github_views: 10,
         demo_views: 5,
-        last_updated: new Date().toISOString(),
+        last_updated: last_updated.toISOString(),
       },
       1: {
         github_views: 20,
         demo_views: 10,
-        last_updated: new Date().toISOString(),
+        last_updated: last_updated.toISOString(),
       },
     };
     client.query.mockResolvedValueOnce({ rows: mockRows });
@@ -79,10 +80,8 @@ describe("getViewCountsHandler", () => {
     expect(client.query).toHaveBeenCalledWith("SELECT * FROM view_count");
     expect(client.end).toHaveBeenCalled();
 
-    expect(result).toEqual({
-      statusCode: 200,
-      body: JSON.stringify(processedResults),
-    });
+    expect(result.body).toEqual(JSON.stringify(processedResults));
+    expect(result.statusCode).toBe(200);
   });
 
   it("should return 500 on database error", async () => {
@@ -99,13 +98,13 @@ describe("getViewCountsHandler", () => {
     expect(JSON.parse(result.body).error).toBe("Internal server error");
   });
 
-  it("should throw error on non-GET method", async () => {
+  it("should receive 400 status code on non-GET method", async () => {
     const event = {
       httpMethod: "POST",
     };
 
-    await expect(handler(event)).rejects.toThrow(
-      /getViewCountsHandler only accepts GET method/
-    );
+    const result = await handler(event);
+
+    expect(result.statusCode).toBe(400);
   });
 });
