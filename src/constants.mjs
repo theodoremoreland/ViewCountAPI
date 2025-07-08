@@ -13,7 +13,7 @@ export const VIEW_COUNT_TABLE = {
 export const PROJECT_TABLE = {
   name: "project",
   columns: {
-    projectId: "project_id",
+    id: "id",
     name: "name",
   },
 };

@@ -48,7 +48,7 @@ export const addProjectHandler = async (event) => {
     await dbClient.connect();
 
     const query = `
-      INSERT INTO ${PROJECT_TABLE.name} (${PROJECT_TABLE.columns.projectId}, ${PROJECT_TABLE.columns.projectName})
+      INSERT INTO ${PROJECT_TABLE.name} (${PROJECT_TABLE.columns.id}, ${PROJECT_TABLE.columns.name})
       VALUES ($1, $2)
       RETURNING *;
     `;
