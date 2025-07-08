@@ -1,8 +1,8 @@
 {
-    "httpMethod": "POST",
-    "path": "/",
-    "body": "{\"name\": \"New Project\", \"description\": \"This is a new project.\"}",
-    "headers": {
-        "Content-Type": "application/json"
-    }
+  "httpMethod": "POST",
+  "path": "/",
+  "body": "{\"name\": \"New Project\", \"id\": 0}",
+  "headers": {
+    "Content-Type": "application/json"
+  }
 }

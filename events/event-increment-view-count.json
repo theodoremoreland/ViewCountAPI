@@ -1,5 +1,8 @@
 {
-    "httpMethod": "PATCH",
-    "body": "{\"projectId\": 0,\"hasViewedGitHub\": true,\"hasViewedDemo\": false}",
-    "path": "/"
+  "httpMethod": "PATCH",
+  "body": "{\"projectId\": 0,\"hasViewedGitHub\": true,\"hasViewedDemo\": false}",
+  "path": "/",
+  "headers": {
+    "Content-Type": "application/json"
+  }
 }

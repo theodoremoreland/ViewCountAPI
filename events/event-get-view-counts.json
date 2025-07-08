@@ -1,4 +1,7 @@
 {
-    "httpMethod": "GET",
-    "path": "/"
+  "httpMethod": "GET",
+  "path": "/",
+  "headers": {
+    "Content-Type": "application/json"
+  }
 }
