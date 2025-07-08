@@ -11,7 +11,7 @@ import { DB_NAME, VIEW_COUNT_TABLE } from "../constants.mjs";
 export const getViewCountsHandler = async (event) => {
   if (event.httpMethod !== "GET") {
     throw new Error(
-      `getViewCountsHandler only accept GET method, you tried: ${event.httpMethod}`
+      `getViewCountsHandler only accepts GET method, you tried: ${event.httpMethod}`
     );
   }
 

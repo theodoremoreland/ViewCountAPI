@@ -5,9 +5,7 @@ import { Client } from "pg";
 import getDbCredentials from "../utils/getDBCredentials.mjs";
 import {
   DB_NAME,
-  VIEW_COUNT_TABLE_NAME,
-  PROJECT_ID_COLUMN,
-  PROJECT_NAME_COLUMN,
+  PROJECT_TABLE
 } from "../constants.mjs";
 
 /**
@@ -50,21 +48,22 @@ export const addProjectHandler = async (event) => {
     await dbClient.connect();
 
     const query = `
-      INSERT INTO ${VIEW_COUNT_TABLE_NAME} (${PROJECT_ID_COLUMN}, ${PROJECT_NAME_COLUMN})
+      INSERT INTO ${PROJECT_TABLE.name} (${PROJECT_TABLE.columns.projectId}, ${PROJECT_TABLE.columns.projectName})
       VALUES ($1, $2)
       RETURNING *;
     `;
 
     const values = [projectId, projectName];
 
-    await dbClient.query(query, values);
+    const result = await dbClient.query(query, values);
+    const newEntry = result.rows[0];
 
     // All log statements are written to CloudWatch
     console.info(`response from: ${event.path} statusCode: 201`);
 
     return {
       statusCode: 201,
-      body: JSON.stringify(updatedItem),
+      body: JSON.stringify(newEntry),
     };
   } catch (err) {
     console.error("Database error:", err);

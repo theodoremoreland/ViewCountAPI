@@ -39,25 +39,40 @@ describe("addProjectHandler", () => {
     jest.clearAllMocks();
   });
 
-  it("should create project entry", async () => {
-    const mockRows = [{ id: "1" }, { id: "2" }];
-    client.query.mockResolvedValueOnce({ rows: mockRows });
-
+  it('returns 400 if projectId or projectName is missing', async () => {
     const event = {
-      httpMethod: "POST",
-      path: "/",
+      httpMethod: 'POST',
+      body: JSON.stringify({ projectId: 'abc' }), // missing projectName
     };
 
-    const result = await handler(event);
+    const response = await handler(event);
 
-    expect(client.connect).toHaveBeenCalled();
-    expect(client.query).toHaveBeenCalledWith("SELECT * FROM view_count");
-    expect(client.end).toHaveBeenCalled();
+    expect(response.statusCode).toBe(400);
+    expect(JSON.parse(response.body).error).toMatch(/Missing required fields/);
+  });
 
-    expect(result).toEqual({
-      statusCode: 201,
-      body: JSON.stringify(mockRows),
-    });
+  it('successfully inserts and returns the new row', async () => {
+    const mockRow = {
+      project_id: 'abc123',
+      project_name: 'Test Project',
+    };
+
+    client.query.mockResolvedValueOnce({ rows: [mockRow] });
+
+    const event = {
+      httpMethod: 'POST',
+      body: JSON.stringify({ projectId: 'abc123', projectName: 'Test Project' }),
+      path: '/add-project',
+    };
+
+    const response = await handler(event);
+
+    expect(response.statusCode).toBe(201);
+    expect(JSON.parse(response.body)).toEqual(mockRow);
+    expect(client.query).toHaveBeenCalledWith(
+      expect.stringContaining('INSERT INTO'),
+      ['abc123', 'Test Project']
+    );
   });
 
   it("should return 500 on database error", async () => {
@@ -65,6 +80,7 @@ describe("addProjectHandler", () => {
 
     const event = {
       httpMethod: "POST",
+      body: JSON.stringify({ projectId: 'abc123', projectName: 'Test Project' }),
       path: "/",
     };
 
@@ -81,7 +97,7 @@ describe("addProjectHandler", () => {
     };
 
     await expect(handler(event)).rejects.toThrow(
-      /addProjectHandler only accept POST method/
+      /addProjectHandler only accepts POST method/
     );
   });
 });

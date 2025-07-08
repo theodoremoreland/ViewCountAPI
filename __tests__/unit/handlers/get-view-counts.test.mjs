@@ -80,7 +80,7 @@ describe("getViewCountsHandler", () => {
     };
 
     await expect(handler(event)).rejects.toThrow(
-      /getViewCountsHandler only accept GET method/
+      /getViewCountsHandler only accepts GET method/
     );
   });
 });
