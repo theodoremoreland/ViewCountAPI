@@ -4,6 +4,14 @@ import {
 } from "@aws-sdk/client-secrets-manager";
 
 const getDbCredentials = async () => {
+  if (!process.env.AWS_REGION) {
+    throw new Error("AWS_REGION environment variable is not defined");
+  }
+
+  if (!process.env.SECRET_ARN) {
+    throw new Error("SECRET_ARN environment variable is not defined");
+  }
+
   const client = new SecretsManagerClient({ region: process.env.AWS_REGION });
   const command = new GetSecretValueCommand({
     SecretId: process.env.SECRET_ARN,

@@ -29,6 +29,9 @@ export const getViewCountsHandler = async (event) => {
       password: creds.password,
       database: DB_NAME,
       port: creds.port,
+      ssl: {
+        rejectUnauthorized: false, // This is necessary for connecting to RDS instances with SSL
+      },
     });
 
     await dbClient.connect();
