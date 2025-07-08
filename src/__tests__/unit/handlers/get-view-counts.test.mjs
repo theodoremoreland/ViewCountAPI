@@ -40,7 +40,32 @@ describe("getViewCountsHandler", () => {
   });
 
   it("should return all view count entries", async () => {
-    const mockRows = [{ id: "1" }, { id: "2" }];
+    const mockRows = [
+      {
+        project_id: "0",
+        github_views: 10,
+        demo_views: 5,
+        last_updated: new Date(),
+      },
+      {
+        project_id: "1",
+        github_views: 20,
+        demo_views: 10,
+        last_updated: new Date(),
+      },
+    ];
+    const processedResults = {
+      0: {
+        github_views: 10,
+        demo_views: 5,
+        last_updated: new Date().toISOString(),
+      },
+      1: {
+        github_views: 20,
+        demo_views: 10,
+        last_updated: new Date().toISOString(),
+      },
+    };
     client.query.mockResolvedValueOnce({ rows: mockRows });
 
     const event = {
@@ -56,7 +81,7 @@ describe("getViewCountsHandler", () => {
 
     expect(result).toEqual({
       statusCode: 200,
-      body: JSON.stringify(mockRows),
+      body: JSON.stringify(processedResults),
     });
   });
 

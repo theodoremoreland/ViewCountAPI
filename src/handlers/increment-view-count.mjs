@@ -19,8 +19,8 @@ export const incrementViewCountHandler = async (event) => {
   console.info("received:", event);
 
   const body = JSON.parse(event.body);
-  const { projectId, hasViewedGitHub, hasViewedDemo } = body;
-  const hasView = hasViewedGitHub || hasViewedDemo;
+  const { projectId, isGitHubView, isDemoView } = body;
+  const hasView = isGitHubView || isDemoView;
   let dbClient;
   let query;
 
@@ -29,7 +29,7 @@ export const incrementViewCountHandler = async (event) => {
       statusCode: 400,
       body: JSON.stringify({
         error:
-          "Missing required fields: projectId and hasViewedGitHub or hasViewedDemo",
+          "Missing required fields: projectId and isGitHubView or isDemoView",
       }),
     };
   }
@@ -50,7 +50,7 @@ export const incrementViewCountHandler = async (event) => {
 
     await dbClient.connect();
 
-    if (hasViewedGitHub) {
+    if (isGitHubView) {
       query = `
       UPDATE ${VIEW_COUNT_TABLE.name}
       SET ${VIEW_COUNT_TABLE.columns.githubViews} = ${VIEW_COUNT_TABLE.columns.githubViews} + 1

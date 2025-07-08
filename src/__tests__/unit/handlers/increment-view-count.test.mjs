@@ -49,7 +49,7 @@ describe("incrementViewCountHandler", () => {
       httpMethod: "PATCH",
       body: JSON.stringify({
         projectId: 123,
-        hasViewedGitHub: true,
+        isGitHubView: true,
       }),
       path: "/",
     };
@@ -71,8 +71,8 @@ describe("incrementViewCountHandler", () => {
       httpMethod: "PATCH",
       body: JSON.stringify({
         projectId: "",
-        hasViewedGitHub: false,
-        hasViewedDemo: false,
+        isGitHubView: false,
+        isDemoView: false,
       }),
     };
 
@@ -89,7 +89,7 @@ describe("incrementViewCountHandler", () => {
       httpMethod: "PATCH",
       body: JSON.stringify({
         projectId: 123,
-        hasViewedDemo: true,
+        isDemoView: true,
       }),
     };
 
@@ -105,7 +105,7 @@ describe("incrementViewCountHandler", () => {
       httpMethod: "PATCH",
       body: JSON.stringify({
         projectId: 123,
-        hasViewedGitHub: true,
+        isGitHubView: true,
       }),
     };
 

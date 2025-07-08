@@ -36,12 +36,23 @@ export const getViewCountsHandler = async (event) => {
 
     await dbClient.connect();
 
-    const result = await dbClient.query(`SELECT * FROM ${VIEW_COUNT_TABLE.name}`);
+    const result = await dbClient.query(
+      `SELECT * FROM ${VIEW_COUNT_TABLE.name}`
+    );
     const items = result.rows;
+    const processedResults = {};
+
+    for (const item of items) {
+      processedResults[item.project_id] = {
+        github_views: item.github_views,
+        demo_views: item.demo_views,
+        last_updated: new Date(item.last_updated).toISOString(),
+      };
+    }
 
     const response = {
       statusCode: 200,
-      body: JSON.stringify(items),
+      body: JSON.stringify(processedResults),
     };
 
     // All log statements are written to CloudWatch
