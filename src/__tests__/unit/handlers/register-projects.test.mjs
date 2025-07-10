@@ -62,26 +62,33 @@ describe("registerProjectsHandler", () => {
     expect(JSON.parse(response.body).error).toMatch(/Missing required fields/);
   });
 
-  it("successfully inserts and returns the new row", async () => {
-    const mockRow = {
+  it("successfully inserts and returns the new rows", async () => {
+    const mockRow1 = {
       project_id: "abc123",
       project_name: "Test Project",
     };
+    const mockRow2 = {
+      project_id: "def456",
+      project_name: "Another Test Project",
+    };
 
-    client.query.mockResolvedValueOnce({ rows: [mockRow] });
+    client.query.mockResolvedValueOnce({ rows: [mockRow1, mockRow2] });
 
     const event = {
       httpMethod: "POST",
-      body: JSON.stringify([{ id: "abc123", name: "Test Project" }]),
+      body: JSON.stringify([
+        { id: "abc123", name: "Test Project" },
+        { id: "def456", name: "Another Test Project" },
+      ]),
     };
 
     const response = await handler(event);
 
     expect(response.statusCode).toBe(201);
-    expect(JSON.parse(response.body)).toEqual(mockRow);
+    expect(JSON.parse(response.body)).toEqual([mockRow1, mockRow2]);
     expect(client.query).toHaveBeenCalledWith(
       expect.stringContaining("INSERT INTO"),
-      ["abc123", "Test Project"]
+      ["abc123", "Test Project", "def456", "Another Test Project"]
     );
   });
 

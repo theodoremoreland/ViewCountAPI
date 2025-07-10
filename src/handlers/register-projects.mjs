@@ -91,16 +91,16 @@ export const registerProjectsHandler = async (event) => {
     `;
 
     const result = await dbClient.query(query, valuesToInsert);
-    const newEntry = result.rows[0];
+    const newEntries = result.rows;
 
-    if (!newEntry) {
+    if (!newEntries || newEntries.length === 0) {
       const errorMessage = "No new entries were added, possibly due to conflict.";
       console.warn(errorMessage);
 
       return buildResponse(409, { error: errorMessage });
     }
 
-    const response = buildResponse(201, newEntry);
+    const response = buildResponse(201, newEntries);
 
     // All log statements are written to CloudWatch
     console.info(
