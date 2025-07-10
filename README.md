@@ -66,7 +66,7 @@ To use the AWS SAM CLI, you need the following tools:
 - Node.js - [Install Node.js 22](https://nodejs.org/en/), including the npm package management tool.
 - Docker - [Install Docker community edition](https://hub.docker.com/search/?type=edition&offering=community).
 
-To build and deploy your application for the first time, run the following in your shell:
+To build and deploy application for the first time, run the following in your shell:
 
 ```bash
 sam build
@@ -95,10 +95,16 @@ The API Gateway endpoint API will be displayed in the outputs when the deploymen
 
 ## Use the AWS SAM CLI to build and test locally
 
+Validate template.yaml.
+
+```bash
+sam validate --template-file template.yaml
+```
+
 Build your application by using the `sam build` command.
 
 ```bash
-my-application$ sam build
+sam build
 ```
 
 The AWS SAM CLI installs dependencies that are defined in `package.json`, creates a deployment package, and saves it in the `.aws-sam/build` folder.
@@ -108,14 +114,14 @@ Test a single function by invoking it directly with a test event. An event is a 
 Run functions locally and invoke them with the `sam local invoke` command.
 
 ```bash
-my-application$ sam local invoke {function name} --event events/event-{event name}.json
+sam local invoke {function name} --event events/event-{event name}.json
 ```
 
 The AWS SAM CLI can also emulate your application's API. Use the `sam local start-api` command to run the API locally on port 3000.
 
 ```bash
-my-application$ sam local start-api
-my-application$ curl http://localhost:3000/
+sam local start-api
+curl http://localhost:3000/
 ```
 
 The AWS SAM CLI reads the application template to determine the API's routes and the functions that they invoke. The `Events` property on each function's definition includes the route and method for each path.
@@ -136,7 +142,7 @@ To simplify troubleshooting, the AWS SAM CLI has a command called `sam logs`. `s
 **NOTE:** This command works for all Lambda functions, not just the ones you deploy using AWS SAM.
 
 ```bash
-my-application$ sam logs -n {function name} --stack-name view-count-api --tail
+sam logs -n {function name} --stack-name view-count-api --tail
 ```
 
 **NOTE:** This uses the logical name of the function within the stack. This is the correct name to use when searching logs inside an AWS Lambda function within a CloudFormation stack, even if the deployed function name varies due to CloudFormation's unique resource name generation.
@@ -146,8 +152,8 @@ my-application$ sam logs -n {function name} --stack-name view-count-api --tail
 Tests are defined in the `__tests__` folder in this project. Use `npm` to install the [Jest test framework](https://jestjs.io/) and run unit tests.
 
 ```bash
-my-application$ npm install
-my-application$ npm run test
+npm install
+npm run test
 ```
 
 ## Cleanup
