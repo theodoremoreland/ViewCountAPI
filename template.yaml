@@ -43,9 +43,6 @@ Resources:
       Throttle:
         RateLimit: 5
         BurstLimit: 5
-      Quota:
-        Limit: 500
-        Period: HOUR
   PublicApiKey:
     Type: AWS::ApiGateway::ApiKey
     Properties:
