@@ -4,10 +4,10 @@ import { Client } from "pg";
 // Custom
 import { DB_NAME, PROJECT_TABLE } from "../constants.mjs";
 import getDbCredentials from "../utils/getDBCredentials.mjs";
+import getAccessToken from "../utils/getAccessToken.mjs";
 import buildResponse from "../utils/buildResponse.mjs";
 
 const ENVIRONMENT = process.env.ENVIRONMENT;
-const PRIVATE_API_KEY = process.env.PRIVATE_API_KEY;
 
 /**
  * Add one or more entries to project table.
@@ -24,10 +24,12 @@ export const registerProjectsHandler = async (event) => {
   }
 
   if (ENVIRONMENT !== "local") {
-    const apiKey = event.headers?.["x-api-key"];
+    const accessTokenReceived = event.headers?.["x-access-token"] ||
+      event.headers?.["X-Access-Token"];
+    const validAccessToken = await getAccessToken();
 
-    if (!apiKey || apiKey !== PRIVATE_API_KEY) {
-      const errorMessage = "Unauthorized request: Invalid or missing API key";
+    if (!accessTokenReceived || accessTokenReceived !== validAccessToken) {
+      const errorMessage = "Unauthorized request: Invalid or missing access token";
       console.error(errorMessage);
 
       return buildResponse(401, { error: errorMessage });

@@ -8,6 +8,10 @@ Parameters:
   DbSecretName:
     Type: String
     Description: Name of the Secrets Manager secret storing DB credentials
+  AccessToken:
+    Type: String
+    Description: The access token used to access POST endpoint.
+    NoEcho: true
   Stage:
     Type: String
     Default: Dev
@@ -22,30 +26,41 @@ Resources:
         AllowMethods: "'GET,POST,PATCH,OPTIONS'"
         AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
         AllowOrigin: "'*'"
-  ViewCountUsagePlan:
+
+  AccessTokenSecret:
+      Type: AWS::SecretsManager::Secret
+      Properties:
+        Name: AccessTokenSecret
+        SecretString: !Ref AccessToken
+
+  PublicUsagePlan:
     Type: AWS::ApiGateway::UsagePlan
     Properties:
-      UsagePlanName: "ViewCountPlan"
+      UsagePlanName: "PublicUsagePlan"
       ApiStages:
         - ApiId: !Ref DevApi
           Stage: !Ref Stage
       Throttle:
         RateLimit: 5
         BurstLimit: 5
+      Quota:
+        Limit: 500
+        Period: HOUR
   PublicApiKey:
     Type: AWS::ApiGateway::ApiKey
     Properties:
-      Name: ViewCountKey
+      Name: PublicKey
       Enabled: true
       StageKeys:
         - RestApiId: !Ref DevApi
           StageName: !Ref Stage
-  UsagePlanKey:
+  PublicUsagePlanKey:
     Type: AWS::ApiGateway::UsagePlanKey
     Properties:
       KeyId: !Ref PublicApiKey
       KeyType: API_KEY
-      UsagePlanId: !Ref ViewCountUsagePlan
+      UsagePlanId: !Ref PublicUsagePlan
+
   RegisterProjectsFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -60,6 +75,8 @@ Resources:
       Policies:
         - AWSSecretsManagerGetSecretValuePolicy:
             SecretArn: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${DbSecretName}-*"
+        - AWSSecretsManagerGetSecretValuePolicy:
+            SecretArn: !Ref AccessTokenSecret
       Events:
         Api:
           Type: Api
@@ -129,7 +146,7 @@ Globals:
     Environment:
       Variables:
         SECRET_NAME: !Ref DbSecretName
-        ENVIRONMENT: ""
-        PRIVATE_API_KEY: ""
+        ENVIRONMENT: "Dev"
+        ACCESS_TOKEN_SECRET_NAME: !Ref AccessTokenSecret
     LoggingConfig:
       LogFormat: JSON

@@ -23,6 +23,11 @@ jest.unstable_mockModule("../../../utils/getDBCredentials.mjs", () => ({
   }),
 }));
 
+// Mock getAccessToken
+jest.unstable_mockModule("../../../utils/getAccessToken.mjs", () => ({
+  default: jest.fn().mockResolvedValue("your-access-token"),
+}));
+
 const OLD_ENV = process.env;
 
 describe("registerProjectsHandler", () => {
@@ -31,6 +36,7 @@ describe("registerProjectsHandler", () => {
 
   beforeAll(() => {
     process.env = { ...OLD_ENV };
+    // Set environment to local as to avoid checking for private API key
     process.env.ENVIRONMENT = "local";
   });
 

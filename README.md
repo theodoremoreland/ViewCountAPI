@@ -29,7 +29,7 @@ The application uses several AWS resources, including Lambda functions, an API G
 #### env.json
 
 Maps function logical IDs (from the template.yaml) to their environment variables.
-Each top-level key must match the logical ID of a Lambda function defined in your template.yaml. SAM uses this to inject environment variables into the corresponding containers during local execution (this is not to be confused with providing parameters overrides to the template.yaml).
+Each top-level key must match the logical ID of a Lambda function defined in your template.yaml. SAM uses this to inject environment variables into the corresponding containers during local execution (this is not to be confused with providing parameters overrides to the template.yaml). NOTE: custom variables must also be defined in the template.yaml globals before they can be overwritten via env.json (does not apply to vars defined by AWS/SAM)
 
 Incorporate into commands like so:
 
