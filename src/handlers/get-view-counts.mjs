@@ -15,20 +15,11 @@ export const getViewCountsHandler = async (event) => {
 
   let dbClient;
 
-  try {
-    if (event.httpMethod !== "GET") {
-      throw new Error(
-        `getViewCountsHandler only accepts GET method, you tried: ${event.httpMethod}`
-      );
-    }
-  } catch (err) {
-    console.error(err);
+  if (event.httpMethod !== "GET") {
+    const errorMessage = `getViewCountsHandler only accepts GET method, you tried: ${event.httpMethod}`;
+    console.error(errorMessage);
 
-    const errorResponse = buildResponse(400, {
-      error: err.message || "Invalid request",
-    });
-
-    return errorResponse;
+    return buildResponse(405, { error: errorMessage });
   }
 
   try {

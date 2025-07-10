@@ -23,6 +23,33 @@ Resources:
         AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
         AllowOrigin: "'*'"
 
+    ViewCountUsagePlan:
+      Type: AWS::ApiGateway::UsagePlan
+      Properties:
+        UsagePlanName: "ViewCountPlan"
+        ApiStages:
+          - ApiId: !Ref DevApi
+            Stage: !Ref Stage
+        Throttle:
+          RateLimit: 5
+          BurstLimit: 5
+
+    PublicApiKey:
+      Type: AWS::ApiGateway::ApiKey
+      Properties:
+        Name: ViewCountKey
+        Enabled: true
+        StageKeys:
+          - RestApiId: !Ref DevApi
+            StageName: !Ref Stage
+
+    UsagePlanKey:
+      Type: AWS::ApiGateway::UsagePlanKey
+      Properties:
+        KeyId: !Ref PublicApiKey
+        KeyType: API_KEY
+        UsagePlanId: !Ref ViewCountUsagePlan
+
   # Each Lambda function is defined by properties:
   # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
 
@@ -48,6 +75,8 @@ Resources:
             Path: /
             Method: POST
             RestApiId: !Ref DevApi
+            Auth:
+              ApiKeyRequired: true
 
   # Each Lambda function is defined by properties:
   # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -74,6 +103,8 @@ Resources:
             Path: /
             Method: GET
             RestApiId: !Ref DevApi
+            Auth:
+              ApiKeyRequired: true
 
   # Each Lambda function is defined by properties:
   # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -100,16 +131,24 @@ Resources:
             Path: /
             Method: PATCH
             RestApiId: !Ref DevApi
+            Auth:
+              ApiKeyRequired: true
 
 Outputs:
   DevApiEndpoint:
     Value: !Sub "https://${DevApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}/"
+  PublicApiKey:
+    Value: !Ref PublicApiKey
+    Description: Public API key for accessing the view-count API
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+# Note: any custom variable in the env.json (for local) must be defined here as well.
 Globals:
   Function:
     Environment:
       Variables:
         SECRET_NAME: !Ref DbSecretName
+        ENVIRONMENT: ""
+        PRIVATE_API_KEY: ""
     LoggingConfig:
       LogFormat: JSON

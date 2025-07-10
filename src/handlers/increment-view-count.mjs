@@ -19,28 +19,20 @@ export const incrementViewCountHandler = async (event) => {
   let dbClient;
   let query;
 
-  try {
-    if (event.httpMethod !== "PATCH") {
-      throw new Error(
-        `patchMethod only accepts PATCH method, you tried: ${event.httpMethod} method.`
-      );
-    }
-
-    if (!projectId || !hasView) {
-      throw new Error(
-        "Missing required fields: projectId and isGitHubView or isDemoView"
-      );
-    }
-  } catch (err) {
-    const errorMessage = err.message || "Invalid request";
-
+  if (event.httpMethod !== "PATCH") {
+    const errorMessage = `incrementViewCountHandler only accepts PATCH method, you tried: ${event.httpMethod} method.`;
     console.error(errorMessage);
 
-    const errorResponse = buildResponse(400, {
+    return buildResponse(405, { error: errorMessage });
+  }
+
+  if (!projectId || !hasView) {
+    const errorMessage = "Missing required fields: projectId and isGitHubView or isDemoView";
+    console.error(errorMessage);
+
+    return buildResponse(400, {
       error: errorMessage,
     });
-
-    return errorResponse;
   }
 
   try {

@@ -31,9 +31,7 @@ describe("incrementViewCountHandler", () => {
       const { Client } = await import("pg");
       client = new Client();
 
-      const mod = await import(
-        "../../../handlers/increment-view-count.mjs"
-      );
+      const mod = await import("../../../handlers/increment-view-count.mjs");
       handler = mod.incrementViewCountHandler;
 
       jest.clearAllMocks();
@@ -113,5 +111,22 @@ describe("incrementViewCountHandler", () => {
 
     expect(result.statusCode).toBe(500);
     expect(JSON.parse(result.body).error).toBe("Internal server error");
+  });
+
+  it("should return 405 on non-PATCH method", async () => {
+    const event = {
+      httpMethod: "GET",
+      body: JSON.stringify({
+        projectId: "123",
+        isGitHubView: true,
+      }),
+    };
+
+    const result = await handler(event);
+
+    expect(result.statusCode).toBe(405);
+    expect(JSON.parse(result.body).error).toBe(
+      "incrementViewCountHandler only accepts PATCH method, you tried: GET method."
+    );
   });
 });

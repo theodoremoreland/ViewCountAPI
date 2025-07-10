@@ -98,13 +98,13 @@ describe("getViewCountsHandler", () => {
     expect(JSON.parse(result.body).error).toBe("Internal server error");
   });
 
-  it("should receive 400 status code on non-GET method", async () => {
+  it("should receive 405 status code on non-GET method", async () => {
     const event = {
       httpMethod: "POST",
     };
 
     const result = await handler(event);
 
-    expect(result.statusCode).toBe(400);
+    expect(result.statusCode).toBe(405);
   });
 });

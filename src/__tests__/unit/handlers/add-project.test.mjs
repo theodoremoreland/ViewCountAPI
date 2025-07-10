@@ -111,4 +111,20 @@ describe("addProjectHandler", () => {
       "addProjectHandler only accepts POST method, you tried: GET method."
     );
   });
+
+  it("should return 409 on conflict", async () => {
+    client.query.mockResolvedValueOnce({ rows: [] }); // Simulate no new rows inserted
+
+    const event = {
+      httpMethod: "POST",
+      body: JSON.stringify([{ id: "abc123", name: "Test Project" }]),
+    };
+
+    const response = await handler(event);
+
+    expect(response.statusCode).toBe(409);
+    expect(JSON.parse(response.body).error).toBe(
+      "No new entries were added, possibly due to conflict."
+    );
+  });
 });

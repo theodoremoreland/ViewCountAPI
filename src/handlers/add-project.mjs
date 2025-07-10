@@ -92,6 +92,14 @@ export const addProjectHandler = async (event) => {
 
     const result = await dbClient.query(query, valuesToInsert);
     const newEntry = result.rows[0];
+
+    if (!newEntry) {
+      const errorMessage = "No new entries were added, possibly due to conflict.";
+      console.warn(errorMessage);
+
+      return buildResponse(409, { error: errorMessage });
+    }
+
     const response = buildResponse(201, newEntry);
 
     // All log statements are written to CloudWatch
