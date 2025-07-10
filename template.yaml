@@ -58,6 +58,7 @@ Resources:
       KeyType: API_KEY
       UsagePlanId: !Ref PublicUsagePlan
 
+  # This lambda should not be called from a publicly available client as to not expose the access token. For personal use only.
   RegisterProjectsFunction:
     Type: AWS::Serverless::Function
     Properties:
