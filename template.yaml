@@ -46,11 +46,11 @@ Resources:
       KeyId: !Ref PublicApiKey
       KeyType: API_KEY
       UsagePlanId: !Ref ViewCountUsagePlan
-  addProjectFunction:
+  RegisterProjectsFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/
-      Handler: handlers/add-project.addProjectHandler
+      Handler: handlers/register-projects.registerProjectsHandler
       Runtime: nodejs22.x
       Architectures:
       - x86_64
@@ -69,7 +69,7 @@ Resources:
             RestApiId: !Ref DevApi
             Auth:
               ApiKeyRequired: true
-  getViewCountsFunction:
+  GetViewCountsFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/
@@ -92,7 +92,7 @@ Resources:
             RestApiId: !Ref DevApi
             Auth:
               ApiKeyRequired: true
-  incrementViewCountFunction:
+  IncrementViewCountFunction:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: src/

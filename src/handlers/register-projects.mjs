@@ -12,12 +12,12 @@ const PRIVATE_API_KEY = process.env.PRIVATE_API_KEY;
 /**
  * Add one or more entries to project table.
  */
-export const addProjectHandler = async (event) => {
+export const registerProjectsHandler = async (event) => {
   // All log statements are written to CloudWatch
   console.info("received:", event);
 
   if (event.httpMethod !== "POST") {
-    const errorMessage = `addProjectHandler only accepts POST method, you tried: ${event.httpMethod} method.`;
+    const errorMessage = `registerProjectsHandler only accepts POST method, you tried: ${event.httpMethod} method.`;
     console.error(errorMessage);
 
     return buildResponse(405, { error: errorMessage });

@@ -25,7 +25,7 @@ jest.unstable_mockModule("../../../utils/getDBCredentials.mjs", () => ({
 
 const OLD_ENV = process.env;
 
-describe("addProjectHandler", () => {
+describe("registerProjectsHandler", () => {
   let handler;
   let client;
 
@@ -43,8 +43,8 @@ describe("addProjectHandler", () => {
       const { Client } = await import("pg");
       client = new Client();
 
-      const mod = await import("../../../handlers/add-project.mjs");
-      handler = mod.addProjectHandler;
+      const mod = await import("../../../handlers/register-projects.mjs");
+      handler = mod.registerProjectsHandler;
     });
 
     jest.clearAllMocks();
@@ -108,7 +108,7 @@ describe("addProjectHandler", () => {
 
     expect(result.statusCode).toBe(405);
     expect(JSON.parse(result.body).error).toBe(
-      "addProjectHandler only accepts POST method, you tried: GET method."
+      "registerProjectsHandler only accepts POST method, you tried: GET method."
     );
   });
 
