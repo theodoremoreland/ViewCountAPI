@@ -12,16 +12,17 @@ Parameters:
     Type: String
     Description: The access token used to access POST endpoint.
     NoEcho: true
-  Stage:
+  DevApiStageName:
     Type: String
-    Default: Dev
+    Default: "Dev"
     Description: The stage for the Rest API Gateway. The implicitly created endpoints are suffixed with /Prod and /Stage. So, this parameter can be used to override the Prod stage.
 
 Resources:
   DevApi:
     Type: AWS::Serverless::Api
     Properties:
-      StageName: !Ref Stage
+      StageName: !Ref DevApiStageName
+      OpenApiVersion: '3.0.1'
       Cors:
         AllowMethods: "'GET,POST,PATCH,OPTIONS'"
         AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
@@ -35,22 +36,24 @@ Resources:
 
   PublicUsagePlan:
     Type: AWS::ApiGateway::UsagePlan
+    DependsOn: DevApiStage
     Properties:
       UsagePlanName: "PublicUsagePlan"
       ApiStages:
         - ApiId: !Ref DevApi
-          Stage: !Ref Stage
+          Stage: !Ref DevApiStageName
       Throttle:
         RateLimit: 5
         BurstLimit: 5
   PublicApiKey:
     Type: AWS::ApiGateway::ApiKey
+    DependsOn: DevApiStage
     Properties:
-      Name: PublicKey
+      Name: PublicApiKey
       Enabled: true
       StageKeys:
         - RestApiId: !Ref DevApi
-          StageName: !Ref Stage
+          StageName: !Ref DevApiStageName
   PublicUsagePlanKey:
     Type: AWS::ApiGateway::UsagePlanKey
     Properties:
@@ -133,7 +136,7 @@ Resources:
 
 Outputs:
   DevApiEndpoint:
-    Value: !Sub "https://${DevApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}/"
+    Value: !Sub "https://${DevApi}.execute-api.${AWS::Region}.amazonaws.com/${DevApiStageName}/"
   PublicApiKey:
     Value: !Ref PublicApiKey
     Description: Public API key for accessing the view-count API
