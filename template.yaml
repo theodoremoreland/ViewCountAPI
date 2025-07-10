@@ -22,38 +22,30 @@ Resources:
         AllowMethods: "'GET,POST,PATCH,OPTIONS'"
         AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
         AllowOrigin: "'*'"
-
-    ViewCountUsagePlan:
-      Type: AWS::ApiGateway::UsagePlan
-      Properties:
-        UsagePlanName: "ViewCountPlan"
-        ApiStages:
-          - ApiId: !Ref DevApi
-            Stage: !Ref Stage
-        Throttle:
-          RateLimit: 5
-          BurstLimit: 5
-
-    PublicApiKey:
-      Type: AWS::ApiGateway::ApiKey
-      Properties:
-        Name: ViewCountKey
-        Enabled: true
-        StageKeys:
-          - RestApiId: !Ref DevApi
-            StageName: !Ref Stage
-
-    UsagePlanKey:
-      Type: AWS::ApiGateway::UsagePlanKey
-      Properties:
-        KeyId: !Ref PublicApiKey
-        KeyType: API_KEY
-        UsagePlanId: !Ref ViewCountUsagePlan
-
-  # Each Lambda function is defined by properties:
-  # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-
-  # This is a Lambda function config associated with the source code: add-project.js
+  ViewCountUsagePlan:
+    Type: AWS::ApiGateway::UsagePlan
+    Properties:
+      UsagePlanName: "ViewCountPlan"
+      ApiStages:
+        - ApiId: !Ref DevApi
+          Stage: !Ref Stage
+      Throttle:
+        RateLimit: 5
+        BurstLimit: 5
+  PublicApiKey:
+    Type: AWS::ApiGateway::ApiKey
+    Properties:
+      Name: ViewCountKey
+      Enabled: true
+      StageKeys:
+        - RestApiId: !Ref DevApi
+          StageName: !Ref Stage
+  UsagePlanKey:
+    Type: AWS::ApiGateway::UsagePlanKey
+    Properties:
+      KeyId: !Ref PublicApiKey
+      KeyType: API_KEY
+      UsagePlanId: !Ref ViewCountUsagePlan
   addProjectFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -77,11 +69,6 @@ Resources:
             RestApiId: !Ref DevApi
             Auth:
               ApiKeyRequired: true
-
-  # Each Lambda function is defined by properties:
-  # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-
-  # This is a Lambda function config associated with the source code: get-view-counts.js
   getViewCountsFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -105,11 +92,6 @@ Resources:
             RestApiId: !Ref DevApi
             Auth:
               ApiKeyRequired: true
-
-  # Each Lambda function is defined by properties:
-  # https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-
-  # This is a Lambda function config associated with the source code: increment-view-count.js
   incrementViewCountFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -141,7 +123,6 @@ Outputs:
     Value: !Ref PublicApiKey
     Description: Public API key for accessing the view-count API
 
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 # Note: any custom variable in the env.json (for local) must be defined here as well.
 Globals:
   Function:
