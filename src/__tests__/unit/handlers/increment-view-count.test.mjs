@@ -129,4 +129,15 @@ describe("incrementViewCountHandler", () => {
       "incrementViewCountHandler only accepts PATCH method, you tried: GET method."
     );
   });
+
+  it("should return 400 if request body is missing", async () => {
+    const event = {
+      httpMethod: "PATCH",
+    };
+
+    const result = await handler(event);
+
+    expect(result.statusCode).toBe(400);
+    expect(JSON.parse(result.body).error).toBe("Request body is missing");
+  });
 });

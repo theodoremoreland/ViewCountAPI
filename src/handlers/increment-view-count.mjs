@@ -13,12 +13,6 @@ export const incrementViewCountHandler = async (event) => {
   // All log statements are written to CloudWatch
   console.info("received:", event);
 
-  const body = JSON.parse(event.body);
-  const { projectId, isGitHubView, isDemoView } = body;
-  const hasView = isGitHubView || isDemoView;
-  let dbClient;
-  let query;
-
   if (event.httpMethod !== "PATCH") {
     const errorMessage = `incrementViewCountHandler only accepts PATCH method, you tried: ${event.httpMethod} method.`;
     console.error(errorMessage);
@@ -26,8 +20,22 @@ export const incrementViewCountHandler = async (event) => {
     return buildResponse(405, { error: errorMessage });
   }
 
+  if (!event.body) {
+    const errorMessage = "Request body is missing";
+    console.error(errorMessage);
+
+    return buildResponse(400, { error: errorMessage });
+  }
+
+  const body = JSON.parse(event.body);
+  const { projectId, isGitHubView, isDemoView } = body;
+  const hasView = isGitHubView || isDemoView;
+  let dbClient;
+  let query;
+
   if (!projectId || !hasView) {
-    const errorMessage = "Missing required fields: projectId and isGitHubView or isDemoView";
+    const errorMessage =
+      "Missing required fields: projectId and isGitHubView or isDemoView";
     console.error(errorMessage);
 
     return buildResponse(400, {

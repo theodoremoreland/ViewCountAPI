@@ -134,4 +134,15 @@ describe("registerProjectsHandler", () => {
       "No new entries were added, possibly due to conflict."
     );
   });
+
+  it("should return 400 if request body is missing", async () => {
+    const event = {
+      httpMethod: "POST",
+    };
+
+    const result = await handler(event);
+
+    expect(result.statusCode).toBe(400);
+    expect(JSON.parse(result.body).error).toBe("Request body is missing");
+  });
 });
