@@ -1,5 +1,5 @@
 // Third party
-import { jest } from "@jest/globals";
+import { beforeAll, jest } from "@jest/globals";
 
 // Mock pg Client
 jest.unstable_mockModule("pg", () => {
@@ -23,9 +23,20 @@ jest.unstable_mockModule("../../../utils/getDBCredentials.mjs", () => ({
   }),
 }));
 
+const OLD_ENV = process.env;
+
 describe("addProjectHandler", () => {
   let handler;
   let client;
+
+  beforeAll(() => {
+    process.env = { ...OLD_ENV };
+    process.env.ENVIRONMENT = "local";
+  });
+
+  afterAll(() => {
+    process.env = OLD_ENV;
+  });
 
   beforeEach(async () => {
     await jest.isolateModulesAsync(async () => {
@@ -39,10 +50,10 @@ describe("addProjectHandler", () => {
     jest.clearAllMocks();
   });
 
-  it('returns 400 if projectId or projectName is missing', async () => {
+  it("returns 400 if id or name is missing", async () => {
     const event = {
-      httpMethod: 'POST',
-      body: JSON.stringify({ projectId: 'abc' }), // missing projectName
+      httpMethod: "POST",
+      body: JSON.stringify([{ name: "Test Project" }]),
     };
 
     const response = await handler(event);
@@ -51,18 +62,17 @@ describe("addProjectHandler", () => {
     expect(JSON.parse(response.body).error).toMatch(/Missing required fields/);
   });
 
-  it('successfully inserts and returns the new row', async () => {
+  it("successfully inserts and returns the new row", async () => {
     const mockRow = {
-      project_id: 'abc123',
-      project_name: 'Test Project',
+      project_id: "abc123",
+      project_name: "Test Project",
     };
 
     client.query.mockResolvedValueOnce({ rows: [mockRow] });
 
     const event = {
-      httpMethod: 'POST',
-      body: JSON.stringify({ projectId: 'abc123', projectName: 'Test Project' }),
-      path: '/add-project',
+      httpMethod: "POST",
+      body: JSON.stringify([{ id: "abc123", name: "Test Project" }]),
     };
 
     const response = await handler(event);
@@ -70,8 +80,8 @@ describe("addProjectHandler", () => {
     expect(response.statusCode).toBe(201);
     expect(JSON.parse(response.body)).toEqual(mockRow);
     expect(client.query).toHaveBeenCalledWith(
-      expect.stringContaining('INSERT INTO'),
-      ['abc123', 'Test Project']
+      expect.stringContaining("INSERT INTO"),
+      ["abc123", "Test Project"]
     );
   });
 
@@ -80,8 +90,7 @@ describe("addProjectHandler", () => {
 
     const event = {
       httpMethod: "POST",
-      body: JSON.stringify({ projectId: 'abc123', projectName: 'Test Project' }),
-      path: "/",
+      body: JSON.stringify([{ id: "abc123", name: "Test Project" }]),
     };
 
     const result = await handler(event);
@@ -90,14 +99,16 @@ describe("addProjectHandler", () => {
     expect(JSON.parse(result.body).error).toBe("Internal server error");
   });
 
-  it("should throw error on non-POST method", async () => {
+  it("should return 405 on non-POST method", async () => {
     const event = {
       httpMethod: "GET",
-      path: "/",
     };
 
-    await expect(handler(event)).rejects.toThrow(
-      /addProjectHandler only accepts POST method/
+    const result = await handler(event);
+
+    expect(result.statusCode).toBe(405);
+    expect(JSON.parse(result.body).error).toBe(
+      "addProjectHandler only accepts POST method, you tried: GET method."
     );
   });
 });

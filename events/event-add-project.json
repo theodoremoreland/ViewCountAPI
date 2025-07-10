@@ -1,7 +1,7 @@
 {
   "httpMethod": "POST",
   "path": "/",
-  "body": "{\"name\": \"New Project\", \"id\": 0}",
+  "body": "[{\"id\":132059424,\"name\":\"Blogz\"},{\"id\":126905575,\"name\":\"WebCaesar\"},{\"id\":126405239,\"name\":\"html-me-something\"}]",
   "headers": {
     "Content-Type": "application/json"
   }
