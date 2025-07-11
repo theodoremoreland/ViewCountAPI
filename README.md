@@ -6,27 +6,15 @@ A serverless Rest API for reporting and getting view counts for [Project List](h
 
 ## Table of contents
 
-- [Overview](#overview)
 - [Technologies used](#technologies-used)
+- [Overview](#overview)
+  - [Files and folders](#files-and-folders)
 - [Deploy application](#deploy-the-application)
 - [Use the AWS SAM CLI to build and test locally](#use-the-aws-sam-cli-to-build-and-test-locally)
 - [Fetch, tail, and filter Lambda function logs](#fetch-tail-and-filter-lambda-function-logs)
 - [Unit tests](#unit-tests)
 - [Cleanup](#unit-tests)
 - [Resources](#resources)
-
-## Overview
-
-This project contains source code and supporting files for a serverless application that you can deploy with the AWS Serverless Application Model (AWS SAM) command line interface (CLI). It includes the following files and folders:
-
-- `src` - Code for the application's Lambda function.
-  - `__tests__` - Unit tests for the application code.
-- `events` - Invocation events that you can use to invoke the function. Only used to test lambdas locally.
-- `env.json.example` - A template for an env.json file that stores variable overrides for the lambdas. Custom variables must be declared in the Globals section of the template.yaml file.
-- `template.yaml` - A template that defines the application's AWS resources.
-- `seed` - Files for creating tables and rows in PostgreSQL database.
-
-The application uses several AWS resources, including Lambda functions, an API Gateway API, AWS Secrets Manager, and AWS RDS. Two of which are defined in the `template.yaml` file in this project. You can update the template to add AWS resources through the same deployment process that updates the application code.
 
 ## Technologies used
 
@@ -38,6 +26,26 @@ The application uses several AWS resources, including Lambda functions, an API G
 - AWS API Gateway
 - AWS Secrets Manager
 - AWS RDS (PostgreSQL)
+
+## Overview
+
+This repository contains all the source code for generating a REST based API Gateway and its corresponding Lambda event handlers for the purposes of managing view counts for my [Project List](https://github.com/theodoremoreland/ProjectList) app. The API supports three HTTP Methods: `GET`, `POST`, and `PATCH` - all of which are handled at the root level of the API (i.e. @ `/`). Each file in the `src/handlers` directory corresponds to one of the method handlers.
+
+The API is technically public as to be available for the Project List app, however two security measures were implemented to discourage public use. Firstly, each route requires an API key. Secondly, the PATCH route responsible for registering new projects for view count tracking requires a private access token. You can review the `template.yaml` file, the `env.json.example` file, and the `src/handlers/register-projects.mjs` files to see how the API and access token were implemented.
+
+### Files and folders
+
+This project contains source code and supporting files for a serverless application that you can deploy with the AWS Serverless Application Model (AWS SAM) command line interface (CLI). It includes the following files and folders:
+
+- `src` - Code for the application's Lambda functions.
+  - `__tests__` - Unit tests for the application code.
+  - `handlers` - Folder for all of the Lambda event handlers.
+- `events` - Invocation events that you can use to invoke the function. Only used to test lambdas locally.
+- `env.json.example` - A template for an env.json file that stores variable overrides for the lambdas. Custom variables must be declared in the Globals section of the template.yaml file.
+- `template.yaml` - A template that defines the application's AWS resources.
+- `seed` - Files for creating tables and rows in PostgreSQL database.
+
+The application uses several AWS resources, including Lambda functions, an API Gateway API, AWS Secrets Manager, and AWS RDS. Two of which are defined in the `template.yaml` file in this project. You can update the template to add AWS resources through the same deployment process that updates the application code.
 
 ## Deploy the application
 
