@@ -2,6 +2,8 @@
 
 A Rest API for reporting and getting view counts. This was designed for use with my developer portfolio websites.
 
+<img src="/presentation/thumbnail.webp" width="650">
+
 ## Table of contents
 
 - [Overview](#overview)
