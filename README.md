@@ -1,6 +1,6 @@
 # View Count API
 
-A Rest API for reporting and getting view counts. This was designed for use with my developer portfolio websites.
+A serverless Rest API for reporting and getting view counts for Project List app.
 
 <img src="/presentation/thumbnail.webp" width="650">
 
@@ -22,30 +22,10 @@ This project contains source code and supporting files for a serverless applicat
 - `src` - Code for the application's Lambda function.
   - `__tests__` - Unit tests for the application code.
 - `events` - Invocation events that you can use to invoke the function. Only used to test lambdas locally.
+- `env.json.example` - A template for an env.json file that stores variable overrides for the lambdas. Custom variables must be declared in the Globals section of the template.yaml file.
 - `template.yaml` - A template that defines the application's AWS resources.
 
 The application uses several AWS resources, including Lambda functions, an API Gateway API, AWS Secrets Manager, and AWS RDS. Two of which are defined in the `template.yaml` file in this project. You can update the template to add AWS resources through the same deployment process that updates the application code.
-
-### Other files
-
-#### env.json
-
-Maps function logical IDs (from the template.yaml) to their environment variables.
-Each top-level key must match the logical ID of a Lambda function defined in your template.yaml. SAM uses this to inject environment variables into the corresponding containers during local execution (this is not to be confused with providing parameters overrides to the template.yaml). NOTE: custom variables must also be defined in the template.yaml globals before they can be overwritten via env.json (does not apply to vars defined by AWS/SAM)
-
-Incorporate into commands like so:
-
-```bash
-sam local start-api --env-vars env.json
-```
-
-or
-
-```bash
-sam local start-api \
-  --env-vars env.json \
-  --parameter-overrides "DbSecretName=my-db-secret"
-```
 
 ## Technologies used
 
@@ -75,10 +55,13 @@ sam build
 sam deploy --guided
 ```
 
-Placeholder (for future reference as I need to assign the parameters defined in template.yaml at some point):
+Deploy with parameter overrides:
 
 ```bash
-sam deploy --parameter-overrides DbSecretName=your-secret-name
+sam deploy \
+  --parameter-overrides \
+  DbSecretName=your-secret-name \
+  AccessToken=your-access-token
 ```
 
 The first command will build the source of your application. The second command will package and deploy your application to AWS, with a series of prompts:
@@ -124,6 +107,16 @@ The AWS SAM CLI can also emulate your application's API. Use the `sam local star
 ```bash
 sam local start-api
 curl http://localhost:3000/
+```
+
+Start API with environment variable and parameter overrides:
+
+```bash
+sam local start-api \
+  --env-vars env.json \
+  --parameter-overrides \
+  DbSecretName=your-secret-name \
+  AccessToken=your-access-token
 ```
 
 The AWS SAM CLI reads the application template to determine the API's routes and the functions that they invoke. The `Events` property on each function's definition includes the route and method for each path.
