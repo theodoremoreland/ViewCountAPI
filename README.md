@@ -33,6 +33,8 @@ This repository contains all the source code for generating a REST based API Gat
 
 The API is technically public as to be available for the Project List app, however two security measures were implemented to discourage public use. Firstly, each route requires an API key. Secondly, the PATCH route responsible for registering new projects for view count tracking requires a private access token. You can review the `template.yaml` file, the `env.json.example` file, and the `src/handlers/register-projects.mjs` files to see how the API and access token were implemented.
 
+The API also depends on an already available RDS PostgreSQL database. So while all the other resources (API Gateway, Lambda, and Secrets Manager) were defined in the `template.yaml`, the database itself is not, only its credentials are referenced via Secrets Manager. The `pg` npm library is used as the database driver.
+
 ### Files and folders
 
 This project contains source code and supporting files for a serverless application that you can deploy with the AWS Serverless Application Model (AWS SAM) command line interface (CLI). It includes the following files and folders:
@@ -45,7 +47,7 @@ This project contains source code and supporting files for a serverless applicat
 - `template.yaml` - A template that defines the application's AWS resources.
 - `seed` - Files for creating tables and rows in PostgreSQL database.
 
-The application uses several AWS resources, including Lambda functions, an API Gateway API, AWS Secrets Manager, and AWS RDS. Two of which are defined in the `template.yaml` file in this project. You can update the template to add AWS resources through the same deployment process that updates the application code.
+The application uses several AWS resources, including Lambda functions, an API Gateway API, AWS Secrets Manager, and AWS RDS. Only the latter of which is not defined in the `template.yaml` file in this project. You can update the template to add/configure AWS resources through the same deployment process that updates the application code.
 
 ## Deploy the application
 
