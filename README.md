@@ -10,7 +10,7 @@ A serverless Rest API for reporting and getting view counts for [Project List](h
 - [Overview](#overview)
   - [Files and folders](#files-and-folders)
 - [How the application is deployed](#how-the-application-is-deployed)
-- [How the AWS SAM CLI is used to build and test locally](#use-the-aws-sam-cli-to-build-and-test-locally)
+- [How the AWS SAM CLI is used to build and test locally](#how-the-aws-sam-cli-is-used-to-build-and-test-locally)
 - [Unit tests](#unit-tests)
 - [Cleanup](#unit-tests)
 - [Resources](#resources)
@@ -74,21 +74,9 @@ sam deploy \
   AccessToken=your-access-token
 ```
 
-The first command will build the source of your application. The second command will package and deploy your application to AWS, with a series of prompts:
+The API Gateway endpoint API will be displayed in the outputs when the deployment is complete assuming the API resource is referenced in the Outputs of the `template.yaml`.
 
-- **Stack Name**: The name of the stack to deploy to CloudFormation. This should be unique to your account and region, and a good starting point would be something matching your project name.
-
-- **AWS Region**: The AWS region you want to deploy your app to.
-
-- **Confirm changes before deploy**: If set to yes, any change sets will be shown to you before execution for manual review. If set to no, the AWS SAM CLI will automatically deploy application changes.
-
-- **Allow SAM CLI IAM role creation**: Many AWS SAM templates, including this example, create AWS IAM roles required for the AWS Lambda function(s) included to access AWS services. By default, these are scoped down to minimum required permissions. To deploy an AWS CloudFormation stack which creates or modifies IAM roles, the `CAPABILITY_IAM` value for `capabilities` must be provided. If permission isn't provided through this prompt, to deploy this example you must explicitly pass `--capabilities CAPABILITY_IAM` to the `sam deploy` command.
-
-- **Save arguments to samconfig.toml**: If set to yes, your choices will be saved to a configuration file inside the project, so that in the future you can just re-run `sam deploy` without parameters to deploy changes to your application.
-
-The API Gateway endpoint API will be displayed in the outputs when the deployment is complete.
-
-## Use the AWS SAM CLI to build and test locally
+## How the AWS SAM CLI is used to build and test locally
 
 Validate template.yaml.
 
