@@ -1,6 +1,6 @@
 # View Count API
 
-A serverless Rest API for reporting and getting view counts for Project List app.
+A serverless Rest API for reporting and getting view counts for [Project List](https://github.com/theodoremoreland/ProjectList) app.
 
 <img src="/presentation/thumbnail.webp" width="650">
 
