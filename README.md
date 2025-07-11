@@ -24,6 +24,7 @@ This project contains source code and supporting files for a serverless applicat
 - `events` - Invocation events that you can use to invoke the function. Only used to test lambdas locally.
 - `env.json.example` - A template for an env.json file that stores variable overrides for the lambdas. Custom variables must be declared in the Globals section of the template.yaml file.
 - `template.yaml` - A template that defines the application's AWS resources.
+- `seed` - Files for creating tables and rows in PostgreSQL database.
 
 The application uses several AWS resources, including Lambda functions, an API Gateway API, AWS Secrets Manager, and AWS RDS. Two of which are defined in the `template.yaml` file in this project. You can update the template to add AWS resources through the same deployment process that updates the application code.
 
