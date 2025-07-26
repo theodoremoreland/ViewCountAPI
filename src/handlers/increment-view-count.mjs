@@ -28,8 +28,8 @@ export const incrementViewCountHandler = async (event) => {
   }
 
   const body = JSON.parse(event.body);
-  const { projectId, isGitHubView, isDemoView } = body;
-  const hasView = isGitHubView || isDemoView;
+  const { projectId, isGitHubView, isDemoView, isExploreView } = body;
+  const hasView = isGitHubView || isDemoView || isExploreView;
   let dbClient;
   let query;
 
@@ -66,10 +66,17 @@ export const incrementViewCountHandler = async (event) => {
       WHERE ${VIEW_COUNT_TABLE.columns.projectId} = $1
       RETURNING *;
     `;
-    } else {
+    } else if (isDemoView) {
       query = `
       UPDATE ${VIEW_COUNT_TABLE.name}
       SET ${VIEW_COUNT_TABLE.columns.demoViews} = ${VIEW_COUNT_TABLE.columns.demoViews} + 1
+      WHERE ${VIEW_COUNT_TABLE.columns.projectId} = $1
+      RETURNING *;
+    `;
+    } else if (isExploreView) {
+      query = `
+      UPDATE ${VIEW_COUNT_TABLE.name}
+      SET ${VIEW_COUNT_TABLE.columns.exploreViews} = ${VIEW_COUNT_TABLE.columns.exploreViews} + 1
       WHERE ${VIEW_COUNT_TABLE.columns.projectId} = $1
       RETURNING *;
     `;

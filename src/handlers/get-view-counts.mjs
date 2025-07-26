@@ -45,10 +45,13 @@ export const getViewCountsHandler = async (event) => {
     const processedResults = {};
 
     for (const item of items) {
-      processedResults[item.project_id] = {
-        github_views: item.github_views,
-        demo_views: item.demo_views,
-        last_updated: new Date(item.last_updated).toISOString(),
+      processedResults[item[VIEW_COUNT_TABLE.columns.projectId]] = {
+        github_views: item[VIEW_COUNT_TABLE.columns.githubViews],
+        demo_views: item[VIEW_COUNT_TABLE.columns.demoViews],
+        explore_views: item[VIEW_COUNT_TABLE.columns.exploreViews],
+        last_updated: new Date(
+          item[VIEW_COUNT_TABLE.columns.lastUpdated]
+        ).toISOString(),
       };
     }
 

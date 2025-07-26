@@ -3,6 +3,7 @@ CREATE TABLE view_count (
   project_id VARCHAR(20) NOT NULL REFERENCES project(id),
   github_views INTEGER DEFAULT 0,
   demo_views INTEGER DEFAULT 0,
+  explored_views INTEGER DEFAULT 0,
   last_updated TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   UNIQUE (project_id)
 );

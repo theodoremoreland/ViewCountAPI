@@ -38,6 +38,31 @@ describe("incrementViewCountHandler", () => {
     });
   });
 
+  it("should increment demo view count and return updated item", async () => {
+    const mockRow = { projectId: "123", demoViews: 5 };
+
+    client.query.mockResolvedValueOnce({ rowCount: 1, rows: [mockRow] });
+    const event = {
+      httpMethod: "PATCH",
+      body: JSON.stringify({
+        projectId: "123",
+        isDemoView: true,
+      }),
+      path: "/",
+    };
+
+    const result = await handler(event);
+
+    expect(client.connect).toHaveBeenCalled();
+    expect(client.query).toHaveBeenCalledWith(
+      expect.stringContaining("UPDATE"),
+      ["123"]
+    );
+    expect(client.end).toHaveBeenCalled();
+    expect(result.statusCode).toBe(200);
+    expect(result.body).toBe(JSON.stringify(mockRow));
+  });
+
   it("should increment GitHub view count and return updated item", async () => {
     const mockRow = { projectId: "123", githubViews: 5 };
 
@@ -64,6 +89,32 @@ describe("incrementViewCountHandler", () => {
     expect(result.body).toBe(JSON.stringify(mockRow));
   });
 
+  it("should increment explore view count and return updated item", async () => {
+    const mockRow = { projectId: "123", exploreViews: 5 };
+
+    client.query.mockResolvedValueOnce({ rowCount: 1, rows: [mockRow] });
+
+    const event = {
+      httpMethod: "PATCH",
+      body: JSON.stringify({
+        projectId: "123",
+        isExploreView: true,
+      }),
+      path: "/",
+    };
+
+    const result = await handler(event);
+
+    expect(client.connect).toHaveBeenCalled();
+    expect(client.query).toHaveBeenCalledWith(
+      expect.stringContaining("UPDATE"),
+      ["123"]
+    );
+    expect(client.end).toHaveBeenCalled();
+    expect(result.statusCode).toBe(200);
+    expect(result.body).toBe(JSON.stringify(mockRow));
+  });
+
   it("should return 400 if required fields are missing", async () => {
     const event = {
       httpMethod: "PATCH",
@@ -71,6 +122,7 @@ describe("incrementViewCountHandler", () => {
         projectId: "",
         isGitHubView: false,
         isDemoView: false,
+        isExploreView: false,
       }),
     };
 

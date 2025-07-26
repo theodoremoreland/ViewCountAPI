@@ -7,6 +7,7 @@ export const VIEW_COUNT_TABLE = {
     projectId: "project_id",
     githubViews: "github_views",
     demoViews: "demo_views",
+    exploreViews: "explore_views",
     lastUpdated: "last_updated",
   },
 };

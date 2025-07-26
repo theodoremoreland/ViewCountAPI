@@ -46,12 +46,14 @@ describe("getViewCountsHandler", () => {
         project_id: "0",
         github_views: 10,
         demo_views: 5,
+        explore_views: 13,
         last_updated: last_updated,
       },
       {
         project_id: "1",
         github_views: 20,
         demo_views: 10,
+        explore_views: 25,
         last_updated: last_updated,
       },
     ];
@@ -59,11 +61,13 @@ describe("getViewCountsHandler", () => {
       0: {
         github_views: 10,
         demo_views: 5,
+        explore_views: 13,
         last_updated: last_updated.toISOString(),
       },
       1: {
         github_views: 20,
         demo_views: 10,
+        explore_views: 25,
         last_updated: last_updated.toISOString(),
       },
     };
